@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEditor;
 
-public class InvertedSphere : EditorWindow
+public class InvertedSphereCreator : EditorWindow
 {
     private string st = "1.0";
 
     [MenuItem("GameObject/Create Other/Inverted Sphere...")]
     public static void ShowWindow()
     {
-        EditorWindow.GetWindow(typeof(InvertedSphere));
+        EditorWindow.GetWindow(typeof(InvertedSphereCreator));
     }
 
     public void OnGUI()
