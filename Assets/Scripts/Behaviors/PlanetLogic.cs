@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Planet : MonoBehaviour
+public class PlanetLogic : MonoBehaviour
 {
     [SerializeField] public float selfRotateSpeed = 10f;
 

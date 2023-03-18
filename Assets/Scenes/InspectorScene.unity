@@ -552,7 +552,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1060942363}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d44e306ceb679804d9b94e74a0e957ed, type: 3}
+  m_Script: {fileID: 11500000, guid: d3b7fbf84a3dc994aabacba7854edd1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _rotateSpeed: 10
@@ -827,7 +827,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1421594760}
-  - component: {fileID: 1421594759}
+  - component: {fileID: 1421594761}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Untagged
@@ -835,19 +835,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1421594759
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1421594758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45100641507e9624fad0913fae63b13a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selfRotateSpeed: 10
 --- !u!4 &1421594760
 Transform:
   m_ObjectHideFlags: 0
@@ -865,6 +852,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1421594761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421594758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8266d719dd00d934c9e88ef01e7e32a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selfRotateSpeed: 10
 --- !u!1 &1654118481
 GameObject:
   m_ObjectHideFlags: 0

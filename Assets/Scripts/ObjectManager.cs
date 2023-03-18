@@ -6,33 +6,70 @@ using TMPro;
 
 public class ObjectManager : MonoBehaviour
 {
-    [SerializeField] private Transform _contentContainer;
-    [SerializeField] private GameObject _itemPrefab;
-    [SerializeField] private int _itemsToGenerate;
+    [SerializeField] private EventManager _eventManager;
 
-    public enum ObjectType
-    {
-        Satellite,
-        Station,
-    }
+    // Object Browser
+    [SerializeField] private Transform _contentContainer;
+    [SerializeField] private Transform _browserItemPrefab;
+    [SerializeField] private int _itemsToGenerate = 5;
+
+    // Inspector
+    [SerializeField] private List<ObjectSO> _objectCollection;
+    [SerializeField] private Transform _inspectorScene;
+
+    [SerializeField] private List<Transform> _objectRecord;
 
     void Start()
     {
-        TestScrollView();
+        SpawnFromCollection();
     }
 
-    void TestScrollView()
+    void SpawnFromCollection()
+    {
+        if (_objectCollection.Count > 0)
+        {
+            foreach (var item in _objectCollection)
+            {
+                CreateBrowserObject(item);
+                CreateInspectorObject(item);
+            }
+        }
+    }
+
+    void BrowserSpawnTest()
     {
         for (int i = 0; i < _itemsToGenerate; i++)
         {
-            var item_go = Instantiate(_itemPrefab);
-            // do something with the instantiated item -- for instance
-            item_go.GetComponentInChildren<TMP_Text>().text = "Item #" + i;
-            // item_go.GetComponent<Image>().color = i % 2 == 0 ? Color.yellow : Color.cyan;
-            //parent the item to the content container
-            item_go.transform.SetParent(_contentContainer);
-            //reset the item's scale -- this can get munged with UI prefabs
-            item_go.transform.localScale = Vector2.one;
+            var item = Instantiate(_browserItemPrefab);
+            var label = "Test Item" + i;
+
+            item.GetComponentInChildren<TMP_Text>().text = label;
+            item.transform.SetParent(_contentContainer);
+            item.transform.localScale = Vector2.one;
+        }
+    }
+
+    void CreateBrowserObject(ObjectSO obj)
+    {
+        var item = Instantiate(_browserItemPrefab);
+        var label = obj.label;
+
+        item.GetComponentInChildren<TMP_Text>().text = label;
+        item.transform.SetParent(_contentContainer);
+        item.transform.localScale = Vector2.one;
+    }
+
+    void CreateInspectorObject(ObjectSO obj)
+    {
+        var item = Instantiate(obj.itemPrefab);
+        var label = obj.label;
+        _objectRecord.Add(item);
+
+        item.transform.SetParent(_inspectorScene);
+
+        var logic = item.GetComponent<ObjectLogic>();
+        if (logic != null) {
+            logic.TargetPlanet = _inspectorScene.GetChild(0);
         }
     }
 }

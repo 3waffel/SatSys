@@ -2,14 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Satellite : MonoBehaviour
+public class SatelliteLogic : ObjectLogic
 {
     [SerializeField] private float _rotateSpeed;
-    [SerializeField] private Transform _targetPlanet;
 
     void Start()
     {
-        // this.transform.SetParent(_targetPlanet);
+        transform.localPosition = new Vector3(0, 0.6f, 0);
     }
 
     void Update()
