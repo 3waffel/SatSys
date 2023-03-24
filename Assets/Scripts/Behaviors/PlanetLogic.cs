@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlanetLogic : MonoBehaviour
 {
-    [SerializeField] public float selfRotateSpeed = 10f;
+    [SerializeField] public float selfRotationSpeed = 24;
+    [SerializeField] private double _startTime = SatelliteUtils.GetJulianDate(DateTime.Now);
+    [SerializeField] private double _currentTime = SatelliteUtils.GetJulianDate(DateTime.Now);
 
     void Update()
     {
-        TestRotation();
+        _currentTime = SatelliteUtils.GetJulianDate(DateTime.Now);
+        EarthRotation((float)(_currentTime - _startTime));
     }
 
-    void TestRotation()
+    void EarthRotation(float epoch)
     {
-        transform.RotateAround(transform.position, Vector3.up, Time.deltaTime * selfRotateSpeed);
+        float angle = epoch * 360 * selfRotationSpeed;
+        transform.rotation = Quaternion.Euler(0, (float)angle, 0);
     }
 }

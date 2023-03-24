@@ -7,5 +7,5 @@ public class EventManager : MonoBehaviour
 {
     public UnityEvent<ObjectSO> onObjectCreated;
     public UnityEvent onObjectToggled;
-
+    public UnityEvent<double> onTimeChanged;
 }

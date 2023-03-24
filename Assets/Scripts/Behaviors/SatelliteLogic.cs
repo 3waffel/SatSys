@@ -1,23 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class SatelliteLogic : ObjectLogic
 {
-    [SerializeField] private float _rotateSpeed;
+    private SatelliteUtils.Satellite _satellite;
+    [SerializeField] private float _rotationSpeed = 20;
+    [SerializeField] private double _startTime = SatelliteUtils.GetJulianDate(DateTime.Now);
+    [SerializeField] private double _currentTime = SatelliteUtils.GetJulianDate(DateTime.Now);
 
     void Start()
     {
+        _satellite = new SatelliteUtils.Satellite();
         transform.localPosition = new Vector3(0, 0.6f, 0);
     }
 
     void Update()
     {
-        TestRotation();
+        _currentTime = SatelliteUtils.GetJulianDate(DateTime.Now);
+        SatelliteRotation((float)(_currentTime - _startTime));
     }
 
-    void TestRotation()
+    void SatelliteRotation(float time)
     {
-        transform.RotateAround(_targetPlanet.position, Vector3.back, Time.deltaTime * _rotateSpeed);
+        var state = _satellite.GetSatelliteState(time);
+        Debug.Log(state);
+        var position = state.Position;
+        var velocity = state.Velocity;
+        transform.position = position;
+        // transform.RotateAround(Vector3.zero, Vector3.up, _rotationSpeed * Time.deltaTime);
     }
 }
