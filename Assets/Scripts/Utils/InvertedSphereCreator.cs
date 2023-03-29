@@ -36,7 +36,6 @@ public class InvertedSphereCreator : EditorWindow
         MeshFilter mfNew = goNew.AddComponent<MeshFilter>();
         mfNew.sharedMesh = new Mesh();
 
-
         //Scale the vertices;
         Vector3[] vertices = mesh.vertices;
         for (int i = 0; i < vertices.Length; i++)
@@ -58,7 +57,6 @@ public class InvertedSphereCreator : EditorWindow
         for (int i = 0; i < normals.Length; i++)
             normals[i] = -normals[i];
         mfNew.sharedMesh.normals = normals;
-
 
         mfNew.sharedMesh.uv = mesh.uv;
         mfNew.sharedMesh.uv2 = mesh.uv2;

@@ -1,17 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
-public class SatelliteUtils : MonoBehaviour
+public class SatelliteUtils
 {
     /// <summary>
-    /// Newtons Gravitational Constant
+    /// Newtons Gravitational Constant (m^3 * kg^-1 * s^-2)
     /// </summary>
     public const double G = 6.6743e-11F;
 
     /// <summary>
-    /// Mass of Earth
+    /// Mass of Earth (kg)
     /// </summary>
     public const double M = 5.972e24F;
 
@@ -20,7 +21,27 @@ public class SatelliteUtils : MonoBehaviour
     /// </summary>
     public static double mu => G * M;
 
-    public static double GetJulianDate(int year, int month, int day, int hour, int minute, int second)
+    /// <summary>
+    /// Start time of the system
+    /// Jan, 1st, 2023, 0:00:00
+    /// </summary>
+    public static double startJulianDate => GetJulianDate(2023, 1, 1, 0, 0, 0);
+
+    /// <summary>
+    /// End time of the system
+    /// Jan, 2nd, 2023, 0:00:00
+    /// </summary>
+    /// <returns></returns>
+    public static double endJulianDate => GetJulianDate(2023, 1, 2, 0, 0, 0);
+
+    public static double GetJulianDate(
+        int year,
+        int month,
+        int day,
+        int hour,
+        int minute,
+        int second
+    )
     {
         DateTime date = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
         double julianDate = date.ToOADate() + 2415018.5;
@@ -33,10 +54,14 @@ public class SatelliteUtils : MonoBehaviour
         return julianDate;
     }
 
+    public static Vector3 D2F(double3 vector) =>
+        new Vector3((float)vector.x, (float)vector.y, (float)vector.z);
+
     /// <summary>
     /// Keplerian Elements of An Orbit
     /// </summary>
-    public record KeplerianElements
+    [Serializable]
+    public struct KeplerianElements
     {
         /// <summary>
         /// This value represents the average distance from the orbiting body to the center of mass.
@@ -44,7 +69,7 @@ public class SatelliteUtils : MonoBehaviour
         public double SemiMajorAxis;
 
         /// <summary>
-        /// A number smaller to one would be a closed ellipse, while 0 would be a circle orbit. 
+        /// A number smaller to one would be a closed ellipse, while 0 would be a circle orbit.
         /// Values higher than one would be hyperbolic orbits, that are not closed, while a 1 would be a parabolic orbit. Negative values cannot exist.
         /// </summary>
         public double Eccentricity;
@@ -97,7 +122,10 @@ public class SatelliteUtils : MonoBehaviour
     /// </summary>
     /// <param name="elements"></param>
     /// <returns></returns>
-    public static (Vector3, Vector3) KeplerianToCartesian(KeplerianElements elements, double julianDate)
+    public static (double3, double3) KeplerianToCartesian(
+        KeplerianElements elements,
+        double julianDate
+    )
     {
         double a = elements.SemiMajorAxis;
         double e = elements.Eccentricity;
@@ -109,39 +137,51 @@ public class SatelliteUtils : MonoBehaviour
         double v = GetTrueAnomaly(elements, julianDate);
 
         double r = a * (1 - e * e) / (1 + e * Math.Cos(v));
-        double x = r * (Math.Cos(o) * Math.Cos(v + w) - Math.Sin(o) * Math.Sin(v + w) * Math.Cos(i));
-        double y = r * (Math.Sin(o) * Math.Cos(v + w) + Math.Cos(o) * Math.Sin(v + w) * Math.Cos(i));
+        double x =
+            r * (Math.Cos(o) * Math.Cos(v + w) - Math.Sin(o) * Math.Sin(v + w) * Math.Cos(i));
+        double y =
+            r * (Math.Sin(o) * Math.Cos(v + w) + Math.Cos(o) * Math.Sin(v + w) * Math.Cos(i));
         double z = r * (Math.Sin(v + w) * Math.Sin(i));
 
         double p = Math.Sqrt(mu / a) / (1 + e * Math.Cos(v));
-        double vx = p * (-Math.Cos(o) * Math.Sin(v + w) - Math.Sin(o) * Math.Cos(v + w) * Math.Cos(i));
-        double vy = p * (-Math.Sin(o) * Math.Sin(v + w) + Math.Cos(o) * Math.Cos(v + w) * Math.Cos(i));
+        double vx =
+            p * (-Math.Cos(o) * Math.Sin(v + w) - Math.Sin(o) * Math.Cos(v + w) * Math.Cos(i));
+        double vy =
+            p * (-Math.Sin(o) * Math.Sin(v + w) + Math.Cos(o) * Math.Cos(v + w) * Math.Cos(i));
         double vz = p * (Math.Sin(i) * Math.Sin(v + w));
 
-        return (new Vector3((float)x, (float)y, (float)z), new Vector3((float)vx, (float)vy, (float)vz));
+        return (new double3(x, y, z), new double3(vx, vy, vz));
     }
 
-    public record SatelliteState
+    [Serializable]
+    public struct SatelliteState
     {
-        private readonly double _julianDate;
-
         /// <value>位置矢量</value>
-        public Vector3 Position { get; set; }
+        public double3 Position { get; set; }
 
         /// <value>速度矢量</value>
-        public Vector3 Velocity { get; set; }
+        public double3 Velocity { get; set; }
     }
 
-    public class Satellite
+    [Serializable]
+    public class SatelliteData
     {
+        private double _epoch;
         private KeplerianElements _elements;
 
-        public Satellite(KeplerianElements elements)
+        private SatelliteState _state;
+        public SatelliteState State
+        {
+            get => _state;
+            set => _state = value;
+        }
+
+        public SatelliteData(KeplerianElements elements)
         {
             this._elements = elements;
         }
 
-        public Satellite()
+        public SatelliteData()
         {
             this._elements = new KeplerianElements
             {
@@ -159,10 +199,11 @@ public class SatelliteUtils : MonoBehaviour
         /// </summary>
         /// <param name="julianDate">指定时刻</param>
         /// <returns></returns>
-        public SatelliteState GetSatelliteState(double julianDate)
+        public SatelliteState UpdateSatelliteState(double julianDate)
         {
             var (position, velocity) = KeplerianToCartesian(_elements, julianDate);
-            return new SatelliteState { Position = position, Velocity = velocity };
+            _state = new SatelliteState { Position = position, Velocity = velocity };
+            return _state;
         }
     }
 }

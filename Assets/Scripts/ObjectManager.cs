@@ -3,24 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class ObjectManager : MonoBehaviour
 {
-    [SerializeField] private EventManager _eventManager;
-
     // Object Browser
-    [SerializeField] private Transform _contentContainer;
-    [SerializeField] private Transform _browserItemPrefab;
-    [SerializeField] private int _itemsToGenerate = 5;
+    [SerializeField]
+    private Transform _contentContainer;
+
+    [SerializeField]
+    private Transform _browserItemPrefab;
 
     // Inspector
-    [SerializeField] private List<ObjectSO> _objectCollection;
-    [SerializeField] private Transform _inspectorScene;
+    [SerializeField]
+    private List<ObjectSO> _objectCollection;
 
-    [SerializeField] private List<Transform> _objectRecord;
+    [SerializeField]
+    private Transform _inspectorScene;
+
+    [SerializeField]
+    private Transform _targetPlanet;
 
     void Start()
     {
+        EventManager.ObjectCreated += OnObjectCreated;
+
         SpawnFromCollection();
     }
 
@@ -28,20 +35,22 @@ public class ObjectManager : MonoBehaviour
     {
         if (_objectCollection.Count > 0)
         {
-            foreach (var item in _objectCollection)
+            foreach (var os in _objectCollection)
             {
-                CreateBrowserObject(item);
-                CreateInspectorObject(item);
+                Guid guid = Guid.NewGuid();
+                CreateBrowserObject(guid, os);
+                CreateInspectorObject(guid, os);
             }
         }
     }
 
     void BrowserSpawnTest()
     {
-        for (int i = 0; i < _itemsToGenerate; i++)
+        int itemsToGenerate = 5;
+        for (int i = 0; i < itemsToGenerate; i++)
         {
             var item = Instantiate(_browserItemPrefab);
-            var label = "Test Item" + i;
+            var label = "Test Item " + i;
 
             item.GetComponentInChildren<TMP_Text>().text = label;
             item.transform.SetParent(_contentContainer);
@@ -49,27 +58,34 @@ public class ObjectManager : MonoBehaviour
         }
     }
 
-    void CreateBrowserObject(ObjectSO obj)
+    void CreateBrowserObject(Guid guid, ObjectSO obj)
     {
         var item = Instantiate(_browserItemPrefab);
         var label = obj.label;
 
         item.GetComponentInChildren<TMP_Text>().text = label;
+        item.GetComponentInChildren<ObjectBrowserItem>().Guid = guid;
         item.transform.SetParent(_contentContainer);
         item.transform.localScale = Vector2.one;
     }
 
-    void CreateInspectorObject(ObjectSO obj)
+    void CreateInspectorObject(Guid guid, ObjectSO obj)
     {
         var item = Instantiate(obj.itemPrefab);
-        var label = obj.label;
-        _objectRecord.Add(item);
-
         item.transform.SetParent(_inspectorScene);
 
         var logic = item.GetComponent<ObjectLogic>();
-        if (logic != null) {
-            logic.TargetPlanet = _inspectorScene.GetChild(0);
+        if (logic != null)
+        {
+            logic.Guid = guid;
+            logic.TargetPlanet = _targetPlanet;
         }
+    }
+
+    void OnObjectCreated(ObjectSO so)
+    {
+        Guid guid = Guid.NewGuid();
+        CreateBrowserObject(guid, so);
+        CreateInspectorObject(guid, so);
     }
 }

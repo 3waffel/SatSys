@@ -4,16 +4,27 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class DraggableWindow : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerDownHandler
+public class DraggableWindow
+    : MonoBehaviour,
+        IDragHandler,
+        IBeginDragHandler,
+        IEndDragHandler,
+        IPointerDownHandler
 {
-    [SerializeField] private RectTransform _dragRectTransform;
-    [SerializeField] private Canvas _canvas;
-    [SerializeField] private Image _backgroundImage;
+    [SerializeField]
+    private RectTransform _dragRectTransform;
+
+    [SerializeField]
+    private Canvas _canvas;
+
+    [SerializeField]
+    private Image _backgroundImage;
     private Color _backgroundColor;
 
     private void Awake()
     {
-        if (_backgroundImage == null) {
+        if (_backgroundImage == null)
+        {
             _backgroundImage = GetComponent<Image>();
         }
         _backgroundColor = _backgroundImage.color;

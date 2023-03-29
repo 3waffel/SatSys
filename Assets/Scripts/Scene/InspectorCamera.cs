@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class InspectorCamera : MonoBehaviour
 {
-    [SerializeField] private Transform _targetInspector;
+    [SerializeField]
+    private Transform _targetInspector;
     private RenderTexture _renderTexture;
     private Camera _camera;
 
@@ -14,7 +15,5 @@ public class InspectorCamera : MonoBehaviour
         _camera = this.GetComponent<Camera>();
     }
 
-    void Update()
-    {
-    }
+    void Update() { }
 }

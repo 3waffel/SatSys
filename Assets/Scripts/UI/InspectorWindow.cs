@@ -5,11 +5,15 @@ using UnityEngine.EventSystems;
 
 public class InspectorWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [SerializeField] private Transform _inspectorCamera;
-    [SerializeField] private float _rotateSensitivity = 1f;
-    [SerializeField] private float _scrollSensitivity = 20f;
+    [SerializeField]
+    private Transform _inspectorCamera;
+
+    [SerializeField]
+    private float _rotateSensitivity = 1f;
+
+    [SerializeField]
+    private float _scrollSensitivity = 20f;
     private bool _insideWindow = false;
-    private float _zoomAmount = 0f;
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -30,8 +34,16 @@ public class InspectorWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                 Cursor.lockState = CursorLockMode.Locked;
                 var x = Input.GetAxis("Mouse X") * _rotateSensitivity;
                 var y = Input.GetAxis("Mouse Y") * _rotateSensitivity;
-                _inspectorCamera.transform.RotateAround(Vector3.zero, _inspectorCamera.transform.up, x);
-                _inspectorCamera.transform.RotateAround(Vector3.zero, _inspectorCamera.transform.right, -y);
+                _inspectorCamera.transform.RotateAround(
+                    Vector3.zero,
+                    _inspectorCamera.transform.up,
+                    x
+                );
+                _inspectorCamera.transform.RotateAround(
+                    Vector3.zero,
+                    _inspectorCamera.transform.right,
+                    -y
+                );
             }
             if (Input.GetAxis("Mouse ScrollWheel") != 0)
             {
