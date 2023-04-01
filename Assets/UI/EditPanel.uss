@@ -1,0 +1,10 @@
+.TextField {
+    width: auto;
+    max-width: 250px;
+    min-width: 200px;
+}
+
+.Button {
+    margin-left: 30px;
+    margin-right: 30px;
+}

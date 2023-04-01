@@ -30,7 +30,6 @@ public class ObjectLogic : MonoBehaviour
     {
         if (_guid == guid)
         {
-            Debug.Log(guid.ToString() + ", " + flag);
             this.gameObject.SetActive(flag);
         }
     }

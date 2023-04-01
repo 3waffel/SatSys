@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using MType = MenuButtonSO.MenuButtonType;
 using static EventManager;
 
 public class MenuButtonLogic : MonoBehaviour
@@ -40,18 +41,17 @@ public class MenuButtonLogic : MonoBehaviour
         }
     }
 
-    private void OnSubmenuClicked(MenuEventType eventType)
+    private void OnSubmenuClicked(MType eventType)
     {
-        Debug.Log(eventType.ToString());
         switch (eventType)
         {
-            case (MenuEventType.Open):
+            case (MType.Open):
                 OnOpenFileClicked();
                 break;
-            case (MenuEventType.Save):
+            case (MType.Save):
                 OnSaveFileClicked();
                 break;
-            case (MenuEventType.Create):
+            case (MType.Create):
                 OnCreateObjectClicked();
                 break;
         }

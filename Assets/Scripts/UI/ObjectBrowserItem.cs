@@ -16,11 +16,11 @@ public class ObjectBrowserItem : MonoBehaviour
 
     void Start()
     {
-        GetComponent<Toggle>().onValueChanged.AddListener(OnToggled);
-    }
-
-    private void OnToggled(bool flag)
-    {
-        EventManager.OnObjectToggled(_guid, flag);
+        GetComponentInChildren<Toggle>().onValueChanged.AddListener(
+            delegate(bool flag)
+            {
+                EventManager.OnObjectToggled(_guid, flag);
+            }
+        );
     }
 }

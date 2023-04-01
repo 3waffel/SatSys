@@ -8,26 +8,15 @@ public class PlanetLogic : MonoBehaviour
     [SerializeField]
     public float selfRotationSpeed = 24;
 
-    [SerializeField]
-    private double _startTime = SatelliteUtils.startJulianDate;
-
-    [SerializeField]
-    private double _currentTime = SatelliteUtils.GetJulianDate(DateTime.Now);
-
     void Start()
     {
-        ShowAxis();
+        // ShowAxis();
+        EventManager.TimeChanged += UpdateEarthRotation;
     }
 
-    void Update()
+    void UpdateEarthRotation(double epoch)
     {
-        _currentTime = SatelliteUtils.GetJulianDate(DateTime.Now);
-        UpdateEarthRotation((float)(_currentTime - _startTime));
-    }
-
-    void UpdateEarthRotation(float epoch)
-    {
-        float angle = epoch * 360 * selfRotationSpeed;
+        float angle = (float)(epoch * 360 * selfRotationSpeed);
         transform.rotation = Quaternion.Euler(0, (float)angle, 0);
     }
 

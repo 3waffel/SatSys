@@ -7,27 +7,17 @@ public class SatelliteLogic : ObjectLogic
 {
     private SatelliteUtils.SatelliteData _satelliteData;
 
-    [SerializeField]
-    private double _startTime = SatelliteUtils.startJulianDate;
-
-    [SerializeField]
-    private double _currentTime = SatelliteUtils.GetJulianDate(DateTime.Now);
-
     protected override void Start()
     {
         base.Start();
 
         _satelliteData = new SatelliteUtils.SatelliteData();
         transform.localPosition = new Vector3(0, 0.6f, 0);
+
+        EventManager.TimeChanged += UpdateSatelliteRotation;
     }
 
-    void Update()
-    {
-        _currentTime = SatelliteUtils.GetJulianDate(DateTime.Now);
-        UpdateSatelliteRotation((float)(_currentTime - _startTime));
-    }
-
-    void UpdateSatelliteRotation(float time)
+    void UpdateSatelliteRotation(double time)
     {
         var state = _satelliteData.UpdateSatelliteState(time);
         var position = state.Position;

@@ -29,12 +29,4 @@ public static class EventManager
     public static void OnSaveFileClicked() => SaveFileClicked?.Invoke();
 
     public static void OnCreateObjectClicked() => CreateObjectClicked?.Invoke();
-
-    public enum MenuEventType
-    {
-        Open,
-        Save,
-        Create,
-        None,
-    }
 }

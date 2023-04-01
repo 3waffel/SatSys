@@ -8,5 +8,13 @@ public class MenuButtonSO : ScriptableObject
 {
     public string label;
 
-    public List<EventManager.MenuEventType> eventList;
+    public List<MenuButtonType> eventList;
+
+    public enum MenuButtonType
+    {
+        Open,
+        Save,
+        Create,
+        None,
+    }
 }
