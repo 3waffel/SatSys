@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   label: Station Antarctic
   itemPrefab: {fileID: 2935226409205383187, guid: 1a858e5267922b549899981d2e7f34b4, type: 3}
-  targetScene: {fileID: 0}
-  targetPlanet: {fileID: 0}
   longitude: -62.21
   latitude: -58.96
-  altitude: 0
+  altitude: 0.01

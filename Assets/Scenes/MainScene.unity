@@ -419,7 +419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isPaused: 0
-  timeScale: 0.01
+  timeScale: 0.001
   startDate: 2459945.5
 --- !u!1 &166897215
 GameObject:
@@ -885,7 +885,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 345624241}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -2439,6 +2439,7 @@ MonoBehaviour:
   objectCollection:
   - {fileID: 11400000, guid: 9adbe3006cd4ad2448c5aa0b6fcb043b, type: 2}
   - {fileID: 11400000, guid: 14440a7b1fbe3ad418f350b9f2848b53, type: 2}
+  - {fileID: 11400000, guid: fa47e1452b0494e419f0c8dbd2a40f64, type: 2}
   targetScene: {fileID: 1711993878}
   targetPlanet: {fileID: 1421594760}
 --- !u!1 &1061583595
@@ -4087,7 +4088,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1738724289}
   m_HandleRect: {fileID: 1738724288}
   m_Direction: 0
-  m_Value: -0.000015258789
+  m_Value: 0.000030517578
   m_Size: 0.9969248
   m_NumberOfSteps: 0
   m_OnValueChanged:

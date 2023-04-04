@@ -16,6 +16,7 @@ public class ObjectSO : ScriptableObject
         Debug.Assert(targetScene != null && targetPlanet != null);
 
         var item = Instantiate(itemPrefab);
+        item.name = label;
         item.transform.SetParent(targetScene);
 
         var logic = item.GetComponent<ObjectLogic>();

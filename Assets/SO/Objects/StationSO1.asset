@@ -16,4 +16,4 @@ MonoBehaviour:
   itemPrefab: {fileID: 2935226409205383187, guid: 1a858e5267922b549899981d2e7f34b4, type: 3}
   longitude: 0
   latitude: 0
-  altitude: 0
+  altitude: 0.01

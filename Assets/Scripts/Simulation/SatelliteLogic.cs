@@ -6,31 +6,46 @@ using SatSys;
 
 public class SatelliteLogic : ObjectLogic
 {
-    public SatData.SatelliteData satelliteData;
+    public SatData.SatelliteData satelliteData = new SatData.SatelliteData();
+
+    public float updateViewInterval = 0.3f;
+
+    private Vector3 currentPosition;
+    private Vector3 currentVelocity;
+    private Vector3 nextPosition;
 
     protected override void Start()
     {
         base.Start();
 
-        transform.localPosition = new Vector3(0, 0.6f, 0);
+        transform.position = new Vector3(0, 0.6f, 0);
+        satelliteData.UpdateInternalState();
+        currentPosition = SatUtils.Vector3(satelliteData.position);
+        currentVelocity = SatUtils.Vector3(satelliteData.velocity);
 
-        satelliteData = new SatData.SatelliteData();
-        satelliteData.CalculateStateExternal();
-
-        EventManager.TimeChanged += UpdateSatelliteRotation;
+        EventManager.TimeChanged += UpdateSatelliteState;
+        InvokeRepeating("UpdateViewFromState", 0, updateViewInterval);
     }
 
-    void UpdateSatelliteRotation(double time)
+    void Update()
     {
-        // satelliteData.UpdateSatelliteState(time);
-        satelliteData.UpdateStateExternal(Time.deltaTime * 0.001f);
-        var velocity = satelliteData.velocity;
-
+        // transform.RotateAround(Vector3.zero, Vector3.right, Time.deltaTime * 10);
         transform.position = Vector3.Lerp(
             transform.position,
-            SatUtils.D2F(satelliteData.position),
-            1f
+            targetPlanet.position + nextPosition,
+            0.1f
         );
-        // transform.RotateAround(Vector3.zero, Vector3.up, _rotationSpeed * Time.deltaTime);
+    }
+
+    void UpdateSatelliteState(double time)
+    {
+        satelliteData.UpdateAnomaly(time);
+    }
+
+    void UpdateViewFromState()
+    {
+        // var nextPosition = currentPosition + Time.deltaTime * currentVelocity;
+        nextPosition = SatUtils.Vector3(satelliteData.position);
+        // transform.position = nextPosition;
     }
 }

@@ -17,8 +17,14 @@ namespace SatSys
             public double gravConst = G;
 
             public KeplerianElements elements;
+            public double currentMeanAnomaly;
+            public double meanMotion =>
+                Math.Sqrt((attractorMass * gravConst) / Math.Pow(elements.SemiMajorAxis, 3));
 
+            [field: SerializeField]
             public double3 position { get; private set; }
+
+            [field: SerializeField]
             public double3 velocity { get; private set; }
 
             public SatelliteData(KeplerianElements elements)
@@ -40,41 +46,43 @@ namespace SatSys
                 };
             }
 
-            public void UpdateSatelliteState(double epoch)
+            public void UpdateInternalState()
             {
-                (position, velocity) = KeplerianToCartesian(elements, epoch);
+                (position, velocity) = KeplerianToCartesian(elements, currentMeanAnomaly);
             }
 
-            public SimpleKeplerOrbits.KeplerOrbitData keplerOrbitData;
-
-            public void CalculateStateExternal()
+            public void UpdateAnomaly(double time)
             {
-                keplerOrbitData = new SimpleKeplerOrbits.KeplerOrbitData(
-                    eccentricity: elements.Eccentricity,
-                    semiMajorAxis: elements.SemiMajorAxis,
-                    meanAnomalyDeg: elements.MeanAnomaly,
-                    inclinationDeg: elements.Inclination,
-                    argOfPerifocusDeg: elements.Periapsis,
-                    ascendingNodeDeg: elements.AscendingNode,
-                    attractorMass: attractorMass,
-                    gConst: gravConst
-                );
+                var elapsedTime = SatDate.GetSeconds(time);
+                currentMeanAnomaly = (elements.MeanAnomaly + elapsedTime * meanMotion) % 360;
 
-                double3 double3(SimpleKeplerOrbits.Vector3d vector3) =>
-                    new double3(vector3.x, vector3.y, vector3.z);
-                velocity = double3(keplerOrbitData.Velocity);
-                position = double3(keplerOrbitData.Position);
+                UpdateInternalState();
             }
 
-            public void UpdateStateExternal(double deltaTime)
-            {
-                keplerOrbitData.UpdateOrbitDataByTime(deltaTime);
+            // public SimpleKeplerOrbits.KeplerOrbitData keplerOrbitData;
 
-                double3 double3(SimpleKeplerOrbits.Vector3d vector3) =>
-                    new double3(vector3.x, vector3.y, vector3.z);
-                velocity = double3(keplerOrbitData.Velocity);
-                position = double3(keplerOrbitData.Position);
-            }
+            // public void CalculateExternalState()
+            // {
+            //     keplerOrbitData = new SimpleKeplerOrbits.KeplerOrbitData(
+            //         eccentricity: elements.Eccentricity,
+            //         semiMajorAxis: elements.SemiMajorAxis,
+            //         meanAnomalyDeg: elements.MeanAnomaly,
+            //         inclinationDeg: elements.Inclination,
+            //         argOfPerifocusDeg: elements.Periapsis,
+            //         ascendingNodeDeg: elements.AscendingNode,
+            //         attractorMass: attractorMass,
+            //         gConst: gravConst
+            //     );
+
+            //     UpdateInternalState();
+            // }
+
+            // public void UpdateExternalState(double deltaTime)
+            // {
+            //     keplerOrbitData.UpdateOrbitDataByTime(deltaTime);
+
+            //     UpdateInternalState();
+            // }
         }
     }
 }

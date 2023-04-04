@@ -46,8 +46,8 @@ public class OrbitDebugDisplay : MonoBehaviour
 
         public VirtualBody(SatelliteLogic satellite)
         {
-            position = SatUtils.D2F(satellite.satelliteData.position);
-            velocity = SatUtils.D2F(satellite.satelliteData.velocity);
+            position = SatUtils.Vector3(satellite.satelliteData.position);
+            velocity = SatUtils.Vector3(satellite.satelliteData.velocity);
         }
     }
 }

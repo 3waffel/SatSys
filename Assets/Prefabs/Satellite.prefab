@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 959510203061537898}
   - component: {fileID: 959510203061537901}
   - component: {fileID: 959510203061537900}
-  - component: {fileID: 959510203061537899}
   m_Layer: 0
   m_Name: Cube_1
   m_TagString: Untagged
@@ -84,19 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &959510203061537899
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 959510203061537897}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &959510203525645078
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,7 +94,6 @@ GameObject:
   - component: {fileID: 959510203525645079}
   - component: {fileID: 959510203525645066}
   - component: {fileID: 959510203525645065}
-  - component: {fileID: 959510203525645064}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -181,19 +166,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &959510203525645064
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 959510203525645078}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &959510204313232931
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,6 +176,7 @@ GameObject:
   m_Component:
   - component: {fileID: 959510204313232932}
   - component: {fileID: 959510204313232933}
+  - component: {fileID: 5787602169290108779}
   m_Layer: 0
   m_Name: Satellite
   m_TagString: Untagged
@@ -241,8 +214,83 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b7fbf84a3dc994aabacba7854edd1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetPlanet: {fileID: 0}
-  _rotateSpeed: 10
+  targetPlanet: {fileID: 0}
+  satelliteData:
+    attractorMass: 5.972099959139834e+24
+    gravConst: 0.00000000006674300001563438
+    elements:
+      SemiMajorAxis: 0.0025
+      Eccentricity: 0.045
+      Inclination: 5.2522
+      Periapsis: 130.6531
+      AscendingNode: 88.9708
+      MeanAnomaly: 328.5176
+    currentMeanAnomaly: 0
+    keplerOrbitData:
+      GravConst: 1
+      Position:
+        x: 0
+        y: 0
+        z: 0
+      AttractorDistance: 0
+      AttractorMass: 0
+      Velocity:
+        x: 0
+        y: 0
+        z: 0
+      MG: 0
+      SemiMinorAxis: 0
+      SemiMajorAxis: 0
+      FocalParameter: 0
+      Eccentricity: 0
+      Period: 0
+      TrueAnomaly: 0
+      MeanAnomaly: 0
+      EccentricAnomaly: 0
+      MeanMotion: 0
+      Periapsis:
+        x: 0
+        y: 0
+        z: 0
+      PeriapsisDistance: 0
+      Apoapsis:
+        x: 0
+        y: 0
+        z: 0
+      ApoapsisDistance: 0
+      CenterPoint:
+        x: 0
+        y: 0
+        z: 0
+      OrbitCompressionRatio: 0
+      OrbitNormal:
+        x: 0
+        y: 0
+        z: 0
+      SemiMinorAxisBasis:
+        x: 0
+        y: 0
+        z: 0
+      SemiMajorAxisBasis:
+        x: 0
+        y: 0
+        z: 0
+      OrbitNormalDotEclipticNormal: 0
+  updateViewInterval: 0.3
+--- !u!136 &5787602169290108779
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959510204313232931}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.012514043
+  m_Height: 0.04971859
+  m_Direction: 2
+  m_Center: {x: 0.000086518936, y: 0, z: -0.00014070794}
 --- !u!1 &7573184986671630817
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,7 +302,6 @@ GameObject:
   - component: {fileID: 8594953373753137181}
   - component: {fileID: 900636207605898996}
   - component: {fileID: 2808935707580773846}
-  - component: {fileID: 3914656731570412622}
   m_Layer: 0
   m_Name: Cylinder
   m_TagString: Untagged
@@ -327,17 +374,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &3914656731570412622
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7573184986671630817}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}

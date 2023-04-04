@@ -48,17 +48,6 @@ namespace SatSys
         }
 
         public static double GetEccentricAnomaly(
-            KeplerianElements elements,
-            int maxIterations = 100
-        )
-        {
-            double e = elements.Eccentricity;
-            double M = elements.MeanAnomaly;
-
-            return GetEccentricAnomaly(M, e, maxIterations);
-        }
-
-        public static double GetEccentricAnomaly(
             double meanAnomaly,
             double eccentricity,
             int maxIterations = 100
@@ -85,24 +74,36 @@ namespace SatSys
             return guess;
         }
 
+        public static double GetEccentricAnomaly(
+            KeplerianElements elements,
+            int maxIterations = 100
+        )
+        {
+            double e = elements.Eccentricity;
+            double M = elements.MeanAnomaly;
+
+            return GetEccentricAnomaly(M, e, maxIterations);
+        }
+
+        public static double GetTrueAnomaly(double eccentricAnomaly, double eccentricity)
+        {
+            double trueAnomaly =
+                2
+                * Math.Atan(
+                    Math.Sqrt((1 + eccentricity) / (1 - eccentricity))
+                        * Math.Tan(eccentricAnomaly / 2)
+                );
+            return trueAnomaly;
+        }
+
         public static double GetTrueAnomaly(KeplerianElements elements)
         {
             double a = elements.SemiMajorAxis;
             double e = elements.Eccentricity;
             double M = elements.MeanAnomaly;
 
-            double E = M + e * Math.Sin(M) * (1.0 + e * Math.Cos(M));
-            double E0 = E;
-            double E1 = E0 - (E0 - e * Math.Sin(E0) - M) / (1 - e * Math.Cos(E0));
-            while (Math.Abs(E1 - E0) > 1e-8)
-            {
-                E0 = E1;
-                E1 = E0 - (E0 - e * Math.Sin(E0) - M) / (1 - e * Math.Cos(E0));
-            }
-
-            double xv = a * (Math.Cos(E) - e);
-            double yv = a * Math.Sqrt(1 - e * e) * Math.Sin(E);
-            double v = Math.Atan2(yv, xv);
+            double E = GetEccentricAnomaly(M, e);
+            double v = GetTrueAnomaly(E, e);
             return v;
         }
 
@@ -128,11 +129,12 @@ namespace SatSys
         /// Convert Kaplerian Orbit elements to Cartesian State Vector
         /// Convert Elements into position and velocity vectors at the given epoch
         /// </summary>
-        /// <param name="elements"></param>
-        /// <returns></returns>
+        /// <param name="elements">Keplerian elements of the orbit</param>
+        /// <param name="currentMeanAnomaly">Current mean anomaly of the orbit</param>
+        /// <returns>A tuple containing position and velocity vectors</returns>
         public static (double3, double3) KeplerianToCartesian(
             KeplerianElements elements,
-            double julianDate
+            double currentMeanAnomaly
         )
         {
             double a = elements.SemiMajorAxis;
@@ -140,9 +142,10 @@ namespace SatSys
             double i = elements.Inclination;
             double o = elements.AscendingNode;
             double w = elements.Periapsis;
-            double M = elements.MeanAnomaly;
+            double M = currentMeanAnomaly;
 
-            double v = GetTrueAnomaly(elements);
+            double E = GetEccentricAnomaly(M, e);
+            double v = GetTrueAnomaly(E, e);
 
             double r = a * (1 - e * e) / (1 + e * Math.Cos(v));
             double x =

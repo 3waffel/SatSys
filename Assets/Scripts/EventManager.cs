@@ -16,6 +16,10 @@ public static class EventManager
 
     public static void OnObjectToggled(Guid guid, bool flag) => ObjectToggled?.Invoke(guid, flag);
 
+    /// <summary>
+    /// Elapsed Time Since Start Time
+    /// </summary>
+    /// <param name="time"></param>
     public static void OnTimeChanged(double time) => TimeChanged?.Invoke(time);
 
     public static void OnTimeRangeChanged(double startTime, double endTime) =>

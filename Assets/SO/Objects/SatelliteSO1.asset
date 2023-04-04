@@ -14,3 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   label: Satellite 1
   itemPrefab: {fileID: 959510204313232932, guid: 813f897af510f9c4d91ec56cbc627e94, type: 3}
+  satelliteData:
+    attractorMass: 0.0001
+    gravConst: 0.0001
+    elements:
+      SemiMajorAxis: 1
+      Eccentricity: 0.045
+      Inclination: 5.2522
+      Periapsis: 130.6531
+      AscendingNode: 88.9708
+      MeanAnomaly: 328.5176
+    currentMeanAnomaly: 328.53212287536115
+    <position>k__BackingField:
+      x: 0.19956532517298708
+      y: 0.8633582881425693
+      z: -0.48961305579215014
+    <velocity>k__BackingField:
+      x: -13372979.10211477
+      y: -5046194.281939778
+      z: -9794893.62779368
+  updateViewInterval: 0.1

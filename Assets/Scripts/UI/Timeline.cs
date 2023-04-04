@@ -14,7 +14,7 @@ public class Timeline : MonoBehaviour
     [SerializeField]
     private bool _isPaused = false;
 
-    public float timeScale = 0.01f;
+    public float timeScale = 0.001f;
 
     public double startDate = SatDate.startJulianDate;
 
