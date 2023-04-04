@@ -8,21 +8,14 @@ using System;
 public class ObjectManager : MonoBehaviour
 {
     // Object Browser
-    [SerializeField]
-    private Transform _contentContainer;
-
-    [SerializeField]
-    private Transform _browserItemPrefab;
+    public Transform contentContainer;
+    public Transform browserItemPrefab;
 
     // Inspector
-    [SerializeField]
-    private List<ObjectSO> _objectCollection;
+    public List<ObjectSO> objectCollection;
 
-    [SerializeField]
-    private Transform _inspectorScene;
-
-    [SerializeField]
-    private Transform _targetPlanet;
+    public Transform targetScene;
+    public Transform targetPlanet;
 
     void Start()
     {
@@ -33,9 +26,9 @@ public class ObjectManager : MonoBehaviour
 
     void SpawnFromCollection()
     {
-        if (_objectCollection.Count > 0)
+        if (objectCollection.Count > 0)
         {
-            foreach (var os in _objectCollection)
+            foreach (var os in objectCollection)
             {
                 Guid guid = Guid.NewGuid();
                 CreateBrowserObject(guid, os);
@@ -49,37 +42,42 @@ public class ObjectManager : MonoBehaviour
         int itemsToGenerate = 5;
         for (int i = 0; i < itemsToGenerate; i++)
         {
-            var item = Instantiate(_browserItemPrefab);
+            var item = Instantiate(browserItemPrefab);
             var label = "Test Item " + i;
 
             item.GetComponentInChildren<TMP_Text>().text = label;
-            item.transform.SetParent(_contentContainer);
+            item.transform.SetParent(contentContainer);
             item.transform.localScale = Vector2.one;
         }
     }
 
     void CreateBrowserObject(Guid guid, ObjectSO obj)
     {
-        var item = Instantiate(_browserItemPrefab);
+        var item = Instantiate(browserItemPrefab);
         var label = obj.label;
 
         item.GetComponentInChildren<TMP_Text>().text = label;
         item.GetComponentInChildren<ObjectBrowserItem>().Guid = guid;
-        item.transform.SetParent(_contentContainer);
+        item.transform.SetParent(contentContainer);
         item.transform.localScale = Vector2.one;
     }
 
     void CreateInspectorObject(Guid guid, ObjectSO obj)
     {
-        var item = Instantiate(obj.itemPrefab);
-        item.transform.SetParent(_inspectorScene);
+        // var item = Instantiate(obj.itemPrefab);
+        // item.transform.SetParent(_inspectorScene);
 
-        var logic = item.GetComponent<ObjectLogic>();
-        if (logic != null)
-        {
-            logic.Guid = guid;
-            logic.TargetPlanet = _targetPlanet;
-        }
+
+        // var logic = item.GetComponent<ObjectLogic>();
+        // if (logic != null)
+        // {
+        //     logic.Guid = guid;
+        //     logic.TargetPlanet = _targetPlanet;
+        // }
+
+        obj.targetScene = targetScene;
+        obj.targetPlanet = targetPlanet;
+        obj.Spawn(guid);
     }
 
     void OnObjectCreated(ObjectSO so)

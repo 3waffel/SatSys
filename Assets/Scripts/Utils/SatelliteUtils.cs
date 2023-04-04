@@ -14,12 +14,14 @@ public class SatelliteUtils
     /// <summary>
     /// Mass of Earth (kg)
     /// </summary>
-    public const double M = 5.972e24F;
+    public const double M = 5.9721e24F;
 
     /// <summary>
     /// Standard Gravitational Parameter
     /// </summary>
     public static double mu => G * M;
+
+    public const double AU = 1.495978707e11;
 
     /// <summary>
     /// Start time of the system
@@ -54,8 +56,16 @@ public class SatelliteUtils
         return julianDate;
     }
 
+    public static DateTime GetDateTime(double julianDate)
+    {
+        return DateTime.FromOADate(julianDate - 2415018.5);
+    }
+
     public static Vector3 D2F(double3 vector) =>
         new Vector3((float)vector.x, (float)vector.y, (float)vector.z);
+
+    public static double SquareMagnitude(double3 vector) =>
+        vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
 
     /// <summary>
     /// Keplerian Elements of An Orbit
@@ -95,7 +105,42 @@ public class SatelliteUtils
         public double MeanAnomaly;
     }
 
-    public static double GetTrueAnomaly(KeplerianElements elements, double julianDate)
+    public static double GetEccentricAnomaly(KeplerianElements elements, int maxIterations = 100)
+    {
+        double e = elements.Eccentricity;
+        double M = elements.MeanAnomaly;
+
+        return GetEccentricAnomaly(M, e, maxIterations);
+    }
+
+    public static double GetEccentricAnomaly(
+        double meanAnomaly,
+        double eccentricity,
+        int maxIterations = 100
+    )
+    {
+        double e = eccentricity;
+        double M = meanAnomaly;
+
+        double KeplerEquation(double E, double M, double e) => M - E + e * Math.Sin(E);
+
+        const double h = 1e-4;
+        const double error = 1e-8;
+        double guess = meanAnomaly;
+
+        for (int i = 0; i < maxIterations; i++)
+        {
+            double y = KeplerEquation(guess, M, e);
+            if (Math.Abs(y) < error)
+                break;
+            double slope = (KeplerEquation(guess + h, M, e) - y) / h;
+            double step = y / slope;
+            guess -= step;
+        }
+        return guess;
+    }
+
+    public static double GetTrueAnomaly(KeplerianElements elements)
     {
         double a = elements.SemiMajorAxis;
         double e = elements.Eccentricity;
@@ -116,6 +161,24 @@ public class SatelliteUtils
         return v;
     }
 
+    public static double2 CalculatePointOnOrbit(double periapsis, double apoapsis, double t)
+    {
+        double semiMajorLength = (apoapsis + periapsis) / 2;
+        double linearEccentricity = semiMajorLength - periapsis;
+        double eccentricity = linearEccentricity / semiMajorLength;
+        double semiMinorLength = Math.Sqrt(
+            Math.Pow(semiMajorLength, 2) - Math.Pow(linearEccentricity, 2)
+        );
+
+        double meanAnomaly = t * Math.PI * 2;
+        double eccentricAnomaly = GetEccentricAnomaly(meanAnomaly, eccentricity);
+
+        double ellipseCenterX = -linearEccentricity;
+        double pointX = Math.Cos(eccentricAnomaly) * semiMajorLength * ellipseCenterX;
+        double pointY = Math.Sin(eccentricAnomaly) * semiMinorLength;
+        return new double2(pointX, pointY);
+    }
+
     /// <summary>
     /// Convert Kaplerian Orbit elements to Cartesian State Vector
     /// Convert Elements into position and velocity vectors at the given epoch
@@ -134,7 +197,7 @@ public class SatelliteUtils
         double w = elements.Periapsis;
         double M = elements.MeanAnomaly;
 
-        double v = GetTrueAnomaly(elements, julianDate);
+        double v = GetTrueAnomaly(elements);
 
         double r = a * (1 - e * e) / (1 + e * Math.Cos(v));
         double x =
@@ -154,56 +217,69 @@ public class SatelliteUtils
     }
 
     [Serializable]
-    public struct SatelliteState
-    {
-        /// <value>位置矢量</value>
-        public double3 Position { get; set; }
-
-        /// <value>速度矢量</value>
-        public double3 Velocity { get; set; }
-    }
-
-    [Serializable]
     public class SatelliteData
     {
-        private double _epoch;
-        private KeplerianElements _elements;
+        public double attractorMass = M;
+        public double gravConst = G;
 
-        private SatelliteState _state;
-        public SatelliteState State
-        {
-            get => _state;
-            set => _state = value;
-        }
+        public KeplerianElements elements;
+
+        public double3 position { get; private set; }
+        public double3 velocity { get; private set; }
 
         public SatelliteData(KeplerianElements elements)
         {
-            this._elements = elements;
+            this.elements = elements;
         }
 
         public SatelliteData()
         {
-            this._elements = new KeplerianElements
+            this.elements = new KeplerianElements
             {
-                SemiMajorAxis = 1.3844, // 384400
-                Eccentricity = 0.0554,
-                Inclination = 5.16,
-                Periapsis = 318.15,
-                AscendingNode = 125.08,
-                MeanAnomaly = 135.27,
+                // Parameters of Moon
+                SemiMajorAxis = 0.0025,
+                Eccentricity = 0.0450,
+                Inclination = 5.2522,
+                Periapsis = 130.6531,
+                AscendingNode = 88.9708,
+                MeanAnomaly = 328.5176,
             };
         }
 
-        /// <summary>
-        /// 根据轨道六根数计算在某一时刻的卫星数据
-        /// </summary>
-        /// <param name="julianDate">指定时刻</param>
-        /// <returns></returns>
-        public SatelliteState UpdateSatelliteState(double julianDate)
+        public void UpdateSatelliteState(double epoch)
         {
-            var (position, velocity) = KeplerianToCartesian(_elements, julianDate);
-            _state = new SatelliteState { Position = position, Velocity = velocity };
-            return _state;
+            (position, velocity) = KeplerianToCartesian(elements, epoch);
+        }
+
+        public SimpleKeplerOrbits.KeplerOrbitData keplerOrbitData;
+
+        public void CalculateStateExternal()
+        {
+            keplerOrbitData = new SimpleKeplerOrbits.KeplerOrbitData(
+                eccentricity: elements.Eccentricity,
+                semiMajorAxis: elements.SemiMajorAxis,
+                meanAnomalyDeg: elements.MeanAnomaly,
+                inclinationDeg: elements.Inclination,
+                argOfPerifocusDeg: elements.Periapsis,
+                ascendingNodeDeg: elements.AscendingNode,
+                attractorMass: attractorMass,
+                gConst: gravConst
+            );
+
+            double3 double3(SimpleKeplerOrbits.Vector3d vector3) =>
+                new double3(vector3.x, vector3.y, vector3.z);
+            velocity = double3(keplerOrbitData.Velocity);
+            position = double3(keplerOrbitData.Position);
+        }
+
+        public void UpdateStateExternal(double deltaTime)
+        {
+            keplerOrbitData.UpdateOrbitDataByTime(deltaTime);
+
+            double3 double3(SimpleKeplerOrbits.Vector3d vector3) =>
+                new double3(vector3.x, vector3.y, vector3.z);
+            velocity = double3(keplerOrbitData.Velocity);
+            position = double3(keplerOrbitData.Position);
         }
     }
 }

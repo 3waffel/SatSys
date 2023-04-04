@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 889f7e6141bbf2f48a6c46962cf10d8c, type: 3}
-  m_Name: SatelliteSO1
+  m_Script: {fileID: 11500000, guid: 8dc67b7bcfad9c644909a0e864797305, type: 3}
+  m_Name: StationSO1
   m_EditorClassIdentifier: 
-  label: SatelliteSO
-  itemPrefab: {fileID: 959510204313232932, guid: 813f897af510f9c4d91ec56cbc627e94, type: 3}
+  label: Station 1
+  itemPrefab: {fileID: 2935226409205383187, guid: 1a858e5267922b549899981d2e7f34b4, type: 3}
+  longitude: 0
+  latitude: 0
+  altitude: 0

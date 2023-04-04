@@ -30,6 +30,7 @@ public class MenuButtonLogic : MonoBehaviour
             item.SetParent(_submenuContainer);
             item.transform.localScale = Vector2.one;
 
+            // Create submenu button instances
             item.GetComponentInChildren<TMP_Text>().text = eventType.ToString();
             item.GetComponent<Button>()
                 .onClick.AddListener(
@@ -46,13 +47,13 @@ public class MenuButtonLogic : MonoBehaviour
         switch (eventType)
         {
             case (MType.Open):
-                OnOpenFileClicked();
+                OnOpenButtonClicked();
                 break;
             case (MType.Save):
-                OnSaveFileClicked();
+                OnSaveButtonClicked();
                 break;
             case (MType.Create):
-                OnCreateObjectClicked();
+                OnCreateButtonClicked();
                 break;
         }
     }

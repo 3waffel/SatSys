@@ -14,6 +14,4 @@ public class InspectorCamera : MonoBehaviour
     {
         _camera = this.GetComponent<Camera>();
     }
-
-    void Update() { }
 }

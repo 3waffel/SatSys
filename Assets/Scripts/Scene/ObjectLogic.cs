@@ -13,13 +13,7 @@ public class ObjectLogic : MonoBehaviour
         set => _guid = value;
     }
 
-    [SerializeField]
-    protected Transform _targetPlanet;
-    public Transform TargetPlanet
-    {
-        get => _targetPlanet;
-        set => _targetPlanet = value;
-    }
+    public Transform targetPlanet;
 
     protected virtual void Start()
     {

@@ -6,9 +6,11 @@ using System;
 
 public static class EventManager
 {
+    // Main Logic Events
     public static UnityAction<ObjectSO> ObjectCreated;
     public static UnityAction<Guid, bool> ObjectToggled;
     public static UnityAction<double> TimeChanged;
+    public static UnityAction<double, double> TimeRangeChanged;
 
     public static void OnObjectCreated(ObjectSO so) => ObjectCreated?.Invoke(so);
 
@@ -16,17 +18,17 @@ public static class EventManager
 
     public static void OnTimeChanged(double time) => TimeChanged?.Invoke(time);
 
-    /// <summary>
-    /// UI Menu Events
-    /// </summary>
+    public static void OnTimeRangeChanged(double startTime, double endTime) =>
+        TimeRangeChanged?.Invoke(startTime, endTime);
 
-    public static UnityAction OpenFileClicked;
-    public static UnityAction SaveFileClicked;
-    public static UnityAction CreateObjectClicked;
+    // UI Menu Events
+    public static UnityAction OpenButtonClicked;
+    public static UnityAction SaveButtonClicked;
+    public static UnityAction CreateButtonClicked;
 
-    public static void OnOpenFileClicked() => OpenFileClicked?.Invoke();
+    public static void OnOpenButtonClicked() => OpenButtonClicked?.Invoke();
 
-    public static void OnSaveFileClicked() => SaveFileClicked?.Invoke();
+    public static void OnSaveButtonClicked() => SaveButtonClicked?.Invoke();
 
-    public static void OnCreateObjectClicked() => CreateObjectClicked?.Invoke();
+    public static void OnCreateButtonClicked() => CreateButtonClicked?.Invoke();
 }

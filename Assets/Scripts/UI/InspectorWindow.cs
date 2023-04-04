@@ -3,40 +3,68 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class InspectorWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class InspectorWindow
+    : MonoBehaviour,
+        IPointerDownHandler,
+        IPointerUpHandler,
+        IPointerEnterHandler,
+        IPointerExitHandler
 {
     [SerializeField]
     private Transform _inspectorCamera;
 
     [SerializeField]
-    private float _rotateSensitivity = 1f;
+    private float _rotationSensitivity = 1f;
 
     [SerializeField]
     private float _scrollSensitivity = 20f;
-    private bool _insideWindow = false;
+
+    private bool _isPointerInside = false;
+    private bool _isPointerDown = false;
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        _insideWindow = true;
+        _isPointerDown = true;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        _isPointerInside = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        _isPointerInside = false;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        _insideWindow = false;
+        _isPointerDown = false;
     }
 
     void Update()
     {
-        if (_insideWindow)
+        if (_isPointerInside)
+        {
+            if (Input.GetAxis("Mouse ScrollWheel") != 0)
+            {
+                var scroll = Input.GetAxis("Mouse ScrollWheel");
+                var camera = _inspectorCamera.GetComponent<Camera>();
+                camera.fieldOfView -= scroll * _scrollSensitivity;
+                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, 20, 150);
+            }
+        }
+
+        if (_isPointerDown)
         {
             if (Input.GetMouseButton(0))
             {
                 Cursor.lockState = CursorLockMode.Locked;
-                var x = Input.GetAxis("Mouse X") * _rotateSensitivity;
-                var y = Input.GetAxis("Mouse Y") * _rotateSensitivity;
+                var x = Input.GetAxis("Mouse X") * _rotationSensitivity;
+                var y = Input.GetAxis("Mouse Y") * _rotationSensitivity;
                 _inspectorCamera.transform.RotateAround(
                     Vector3.zero,
-                    _inspectorCamera.transform.up,
+                    Vector3.up,
                     x
                 );
                 _inspectorCamera.transform.RotateAround(
@@ -44,13 +72,6 @@ public class InspectorWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                     _inspectorCamera.transform.right,
                     -y
                 );
-            }
-            if (Input.GetAxis("Mouse ScrollWheel") != 0)
-            {
-                var scroll = Input.GetAxis("Mouse ScrollWheel");
-                var camera = _inspectorCamera.GetComponent<Camera>();
-                camera.fieldOfView -= scroll * _scrollSensitivity;
-                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, 20, 150);
             }
         }
         else if (Cursor.lockState != CursorLockMode.None)

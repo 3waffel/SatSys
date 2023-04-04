@@ -4,14 +4,26 @@ using UnityEngine;
 
 public class StationLogic : ObjectLogic
 {
+    public float altitude;
+    public float longitude;
+    public float latitude;
+
     protected override void Start()
     {
         base.Start();
 
-        transform.SetParent(_targetPlanet);
-        var position = new Vector3(0, 0.2f, 0.4f);
-        var rotation = new Quaternion();
+        transform.SetParent(targetPlanet);
+        altitude = targetPlanet.gameObject.GetComponent<PlanetLogic>().SphereRadius;
+        UpdatePosition();
+    }
 
-        transform.SetLocalPositionAndRotation(position, rotation);
+    /// <summary>
+    /// Position relative to the parent planet
+    /// </summary>
+    private void UpdatePosition()
+    {
+        transform.localPosition = new Vector3(altitude, 0, 0);
+        transform.RotateAround(Vector3.zero, Vector3.up, longitude);
+        transform.RotateAround(Vector3.zero, transform.forward, latitude);
     }
 }

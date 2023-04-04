@@ -27,14 +27,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2935226409205383186}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.7071065, w: 0.7071071}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.05, y: 0.023812056, z: 0.05}
+  m_LocalScale: {x: 0.020961512, y: 0.0054692407, z: 0.020961512}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!33 &2935226409205383190
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -97,7 +97,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a374af215d981f489c93d9b6a3aa904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetPlanet: {fileID: 0}
+  targetPlanet: {fileID: 0}
+  altitude: 0
+  longitude: 0
+  latitude: 0
 --- !u!64 &6651201202138411578
 MeshCollider:
   m_ObjectHideFlags: 0

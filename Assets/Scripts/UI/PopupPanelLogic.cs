@@ -6,7 +6,7 @@ public class PopupPanelLogic : MonoBehaviour
 {
     void Start()
     {
-        EventManager.CreateObjectClicked += OnCreateObjectClicked;
+        EventManager.CreateButtonClicked += OnCreateObjectClicked;
     }
 
     private void AcceptElements() { }

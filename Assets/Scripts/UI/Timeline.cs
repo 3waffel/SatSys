@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class Timeline : MonoBehaviour
 {
@@ -12,8 +13,9 @@ public class Timeline : MonoBehaviour
     [SerializeField]
     private bool _isPaused = false;
 
-    [SerializeField]
-    private float _timeScale = 0.01f;
+    public float timeScale = 0.01f;
+
+    public double startDate = SatelliteUtils.startJulianDate;
 
     void Start()
     {
@@ -24,7 +26,7 @@ public class Timeline : MonoBehaviour
             delegate(float value)
             {
                 EventManager.OnTimeChanged(value);
-                _input.text = value.ToString();
+                _input.text = SatelliteUtils.GetDateTime(value + startDate).ToString();
             }
         );
 
@@ -34,6 +36,14 @@ public class Timeline : MonoBehaviour
                 if (float.TryParse(input, out float result))
                 {
                     _slider.value = Mathf.Clamp(result, _slider.minValue, _slider.maxValue);
+                }
+                else if (DateTime.TryParse(input, out DateTime dateTime))
+                {
+                    _slider.value = Mathf.Clamp(
+                        (float)(SatelliteUtils.GetJulianDate(dateTime) - startDate),
+                        _slider.minValue,
+                        _slider.maxValue
+                    );
                 }
             }
         );
@@ -52,7 +62,7 @@ public class Timeline : MonoBehaviour
     {
         if (!_isPaused)
         {
-            _slider.value += Time.deltaTime * _timeScale;
+            _slider.value += Time.deltaTime * timeScale;
         }
     }
 }
