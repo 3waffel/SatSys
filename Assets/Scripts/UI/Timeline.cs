@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using SatSys;
 
 public class Timeline : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class Timeline : MonoBehaviour
 
     public float timeScale = 0.01f;
 
-    public double startDate = SatelliteUtils.startJulianDate;
+    public double startDate = SatDate.startJulianDate;
 
     void Start()
     {
@@ -26,7 +27,7 @@ public class Timeline : MonoBehaviour
             delegate(float value)
             {
                 EventManager.OnTimeChanged(value);
-                _input.text = SatelliteUtils.GetDateTime(value + startDate).ToString();
+                _input.text = SatDate.GetDateTime(value + startDate).ToString();
             }
         );
 
@@ -40,7 +41,7 @@ public class Timeline : MonoBehaviour
                 else if (DateTime.TryParse(input, out DateTime dateTime))
                 {
                     _slider.value = Mathf.Clamp(
-                        (float)(SatelliteUtils.GetJulianDate(dateTime) - startDate),
+                        (float)(SatDate.GetJulianDate(dateTime) - startDate),
                         _slider.minValue,
                         _slider.maxValue
                     );

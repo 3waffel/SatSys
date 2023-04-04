@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SatSys;
 
 public class OrbitDebugDisplay : MonoBehaviour
 {
@@ -23,7 +24,8 @@ public class OrbitDebugDisplay : MonoBehaviour
         int referenceFrameIndex = 0;
         Vector3 referenceBodyInitialPosition = Vector3.zero;
 
-        for (int i = 0; i < virtualBodies.Length; i++) {
+        for (int i = 0; i < virtualBodies.Length; i++)
+        {
             virtualBodies[i] = new VirtualBody(bodies[i]);
             drawPoints[i] = new Vector3[numSteps];
         }
@@ -31,13 +33,10 @@ public class OrbitDebugDisplay : MonoBehaviour
         for (int step = 0; step < numSteps; step++)
         {
             Vector3 referenceBodyPosition = Vector3.zero;
-            for (int i = 0; i < virtualBodies.Length; i++)
-            {
-            }
+            for (int i = 0; i < virtualBodies.Length; i++) { }
         }
 
         LineRenderer renderer = new LineRenderer();
-
     }
 
     class VirtualBody
@@ -47,8 +46,8 @@ public class OrbitDebugDisplay : MonoBehaviour
 
         public VirtualBody(SatelliteLogic satellite)
         {
-            position = SatelliteUtils.D2F(satellite.satelliteData.position);
-            velocity = SatelliteUtils.D2F(satellite.satelliteData.velocity);
+            position = SatUtils.D2F(satellite.satelliteData.position);
+            velocity = SatUtils.D2F(satellite.satelliteData.velocity);
         }
     }
 }

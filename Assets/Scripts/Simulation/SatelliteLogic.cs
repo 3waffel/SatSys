@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using SatSys;
 
 public class SatelliteLogic : ObjectLogic
 {
-    public SatelliteUtils.SatelliteData satelliteData;
+    public SatData.SatelliteData satelliteData;
 
     protected override void Start()
     {
@@ -13,7 +14,7 @@ public class SatelliteLogic : ObjectLogic
 
         transform.localPosition = new Vector3(0, 0.6f, 0);
 
-        satelliteData = new SatelliteUtils.SatelliteData();
+        satelliteData = new SatData.SatelliteData();
         satelliteData.CalculateStateExternal();
 
         EventManager.TimeChanged += UpdateSatelliteRotation;
@@ -27,7 +28,7 @@ public class SatelliteLogic : ObjectLogic
 
         transform.position = Vector3.Lerp(
             transform.position,
-            SatelliteUtils.D2F(satelliteData.position),
+            SatUtils.D2F(satelliteData.position),
             1f
         );
         // transform.RotateAround(Vector3.zero, Vector3.up, _rotationSpeed * Time.deltaTime);
