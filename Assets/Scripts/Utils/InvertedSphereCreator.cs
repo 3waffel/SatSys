@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 public class InvertedSphereCreator : EditorWindow
 {
     private string st = "1.0";
@@ -69,3 +70,4 @@ public class InvertedSphereCreator : EditorWindow
         DestroyImmediate(go);
     }
 }
+#endif

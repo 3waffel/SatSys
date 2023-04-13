@@ -9,7 +9,9 @@ using SatSys;
 public class Timeline : MonoBehaviour
 {
     private Slider _slider;
-    private TMP_InputField _input;
+
+    public TMP_InputField valueInput;
+    public TMP_InputField timeScaleInput;
 
     [SerializeField]
     private bool _isPaused = false;
@@ -21,33 +23,48 @@ public class Timeline : MonoBehaviour
     void Start()
     {
         _slider = GetComponentInChildren<Slider>();
-        _input = GetComponentInChildren<TMP_InputField>();
-
         _slider.onValueChanged.AddListener(
             delegate(float value)
             {
                 EventManager.OnTimeChanged(value);
-                _input.text = SatDate.GetDateTime(value + startDate).ToString();
+                valueInput.text = SatDate.GetDateTime(value + startDate).ToString();
             }
         );
 
-        _input.onEndEdit.AddListener(
-            delegate(string input)
-            {
-                if (float.TryParse(input, out float result))
+        if (valueInput != null)
+        {
+            valueInput.onEndEdit.AddListener(
+                delegate(string input)
                 {
-                    _slider.value = Mathf.Clamp(result, _slider.minValue, _slider.maxValue);
+                    if (float.TryParse(input, out float result))
+                    {
+                        _slider.value = Mathf.Clamp(result, _slider.minValue, _slider.maxValue);
+                    }
+                    else if (DateTime.TryParse(input, out DateTime dateTime))
+                    {
+                        _slider.value = Mathf.Clamp(
+                            (float)(SatDate.GetJulianDate(dateTime) - startDate),
+                            _slider.minValue,
+                            _slider.maxValue
+                        );
+                    }
                 }
-                else if (DateTime.TryParse(input, out DateTime dateTime))
+            );
+        }
+
+        if (timeScaleInput != null)
+        {
+            timeScaleInput.text = timeScale.ToString();
+            timeScaleInput.onEndEdit.AddListener(
+                delegate(string input)
                 {
-                    _slider.value = Mathf.Clamp(
-                        (float)(SatDate.GetJulianDate(dateTime) - startDate),
-                        _slider.minValue,
-                        _slider.maxValue
-                    );
+                    if (float.TryParse(input, out float result))
+                    {
+                        timeScale = Mathf.Clamp(result, 0.0001f, 1f);
+                    }
                 }
-            }
-        );
+            );
+        }
 
         var toggle = GetComponentInChildren<Toggle>();
         toggle.isOn = false;

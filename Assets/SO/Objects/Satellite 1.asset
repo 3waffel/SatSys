@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc03ddac993c8ef40859046a8c4039bc, type: 3}
-  m_Name: SatelliteSO1
+  m_Name: Satellite 1
   m_EditorClassIdentifier: 
   label: Satellite 1
   itemPrefab: {fileID: 959510204313232932, guid: 813f897af510f9c4d91ec56cbc627e94, type: 3}
@@ -24,13 +24,13 @@ MonoBehaviour:
       Periapsis: 130.6531
       AscendingNode: 88.9708
       MeanAnomaly: 328.5176
-    currentMeanAnomaly: 328.53212287536115
+    currentMeanAnomaly: 328.98007744321825
     <position>k__BackingField:
-      x: 0.19956532517298708
-      y: 0.8633582881425693
-      z: -0.48961305579215014
+      x: -0.09822544813661481
+      y: 0.6917478867759225
+      z: -0.7562345882942895
     <velocity>k__BackingField:
-      x: -13372979.10211477
-      y: -5046194.281939778
-      z: -9794893.62779368
+      x: -14056609.49781838
+      y: -11973500.820041634
+      z: -15128757.826967388
   updateViewInterval: 0.1

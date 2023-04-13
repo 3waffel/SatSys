@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using static SatSys.SatData;
 
 public class ObjectManager : MonoBehaviour
 {
@@ -11,11 +12,13 @@ public class ObjectManager : MonoBehaviour
     public Transform contentContainer;
     public Transform browserItemPrefab;
 
-    // Inspector
+    // ObjectSO Collection
     public List<ObjectSO> objectCollection;
 
     public Transform targetScene;
     public Transform targetPlanet;
+
+    public Transform satellitePrefab;
 
     void Start()
     {
@@ -28,11 +31,11 @@ public class ObjectManager : MonoBehaviour
     {
         if (objectCollection.Count > 0)
         {
-            foreach (var os in objectCollection)
+            foreach (var so in objectCollection)
             {
                 Guid guid = Guid.NewGuid();
-                CreateBrowserObject(guid, os);
-                CreateInspectorObject(guid, os);
+                CreateBrowserObject(guid, so.label);
+                CreateInspectorObject(guid, so);
             }
         }
     }
@@ -51,10 +54,9 @@ public class ObjectManager : MonoBehaviour
         }
     }
 
-    void CreateBrowserObject(Guid guid, ObjectSO obj)
+    void CreateBrowserObject(Guid guid, string label)
     {
         var item = Instantiate(browserItemPrefab);
-        var label = obj.label;
 
         item.GetComponentInChildren<TMP_Text>().text = label;
         item.GetComponentInChildren<ObjectBrowserItem>().Guid = guid;
@@ -64,17 +66,6 @@ public class ObjectManager : MonoBehaviour
 
     void CreateInspectorObject(Guid guid, ObjectSO obj)
     {
-        // var item = Instantiate(obj.itemPrefab);
-        // item.transform.SetParent(_inspectorScene);
-
-
-        // var logic = item.GetComponent<ObjectLogic>();
-        // if (logic != null)
-        // {
-        //     logic.Guid = guid;
-        //     logic.TargetPlanet = _targetPlanet;
-        // }
-
         obj.targetScene = targetScene;
         obj.targetPlanet = targetPlanet;
         obj.Spawn(guid);
@@ -83,7 +74,22 @@ public class ObjectManager : MonoBehaviour
     void OnObjectCreated(ObjectSO so)
     {
         Guid guid = Guid.NewGuid();
-        CreateBrowserObject(guid, so);
+        CreateBrowserObject(guid, so.label);
         CreateInspectorObject(guid, so);
+    }
+
+    void CreateSatelliteFromData(SatelliteData data, string label)
+    {
+        Guid guid = Guid.NewGuid();
+
+        CreateBrowserObject(guid, label);
+
+        var sat = Instantiate(satellitePrefab);
+        sat.name = label;
+        sat.transform.SetParent(targetScene);
+        var logic = sat.GetComponent<SatelliteLogic>();
+        logic.Guid = guid;
+        logic.targetPlanet = targetPlanet;
+        logic.satelliteData = data;
     }
 }

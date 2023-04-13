@@ -19,7 +19,7 @@ public class ObjectBrowserItem : MonoBehaviour
         GetComponentInChildren<Toggle>().onValueChanged.AddListener(
             delegate(bool flag)
             {
-                EventManager.OnObjectToggled(_guid, flag);
+                EventManager.OnBrowserItemToggled(_guid, flag);
             }
         );
     }

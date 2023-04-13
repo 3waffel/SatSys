@@ -9,6 +9,7 @@ public class StationSO : ObjectSO
     public float longitude;
     public float latitude;
     public float altitude;
+    public float elevation = 5f;
 
     public override Transform Spawn(Guid guid)
     {
@@ -18,6 +19,7 @@ public class StationSO : ObjectSO
         station.longitude = longitude;
         station.latitude = latitude;
         station.altitude = altitude;
+        station.elevation = elevation;
         return item;
     }
 }

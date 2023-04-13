@@ -8,22 +8,37 @@ public static class EventManager
 {
     // Main Logic Events
     public static UnityAction<ObjectSO> ObjectCreated;
-    public static UnityAction<Guid, bool> ObjectToggled;
     public static UnityAction<double> TimeChanged;
     public static UnityAction<double, double> TimeRangeChanged;
 
     public static void OnObjectCreated(ObjectSO so) => ObjectCreated?.Invoke(so);
 
-    public static void OnObjectToggled(Guid guid, bool flag) => ObjectToggled?.Invoke(guid, flag);
-
     /// <summary>
-    /// Elapsed Time Since Start Time
+    /// Elapsed time since start time
     /// </summary>
-    /// <param name="time"></param>
+    /// <param name="time">elapsed time</param>
     public static void OnTimeChanged(double time) => TimeChanged?.Invoke(time);
 
     public static void OnTimeRangeChanged(double startTime, double endTime) =>
         TimeRangeChanged?.Invoke(startTime, endTime);
+
+    // UI Browser Events
+    public static UnityAction<Guid, bool> BrowserItemToggled;
+    public static UnityAction<Guid> BrowserItemSelected;
+    public static UnityAction<ObjectLogic> ObjectInfoSent;
+
+    public static void OnBrowserItemToggled(Guid guid, bool flag) =>
+        BrowserItemToggled?.Invoke(guid, flag);
+
+    /// <summary>
+    /// trigger when the browser item is selected
+    /// </summary>
+    public static void OnBrowserItemSelected(Guid id) => BrowserItemSelected?.Invoke(id);
+
+    /// <summary>
+    /// Send info from the scene object to the display window
+    /// /// </summary>
+    public static void OnObjectInfoSent(ObjectLogic logic) => ObjectInfoSent?.Invoke(logic);
 
     // UI Menu Events
     public static UnityAction OpenButtonClicked;

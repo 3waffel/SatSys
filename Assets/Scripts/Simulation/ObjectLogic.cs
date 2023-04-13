@@ -17,7 +17,7 @@ public class ObjectLogic : MonoBehaviour
 
     protected virtual void Start()
     {
-        EventManager.ObjectToggled += OnObjectToggled;
+        EventManager.BrowserItemToggled += OnObjectToggled;
     }
 
     protected virtual void OnObjectToggled(Guid guid, bool flag)

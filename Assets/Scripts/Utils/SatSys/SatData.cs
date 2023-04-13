@@ -58,31 +58,22 @@ namespace SatSys
 
                 UpdateInternalState();
             }
+        }
 
-            // public SimpleKeplerOrbits.KeplerOrbitData keplerOrbitData;
+        [Serializable]
+        public class WalkerConstellation
+        {
+            public int satellitesCount;
+            public int planesCount;
+            public int phasing;
+            public double inclination;
+            public double height;
 
-            // public void CalculateExternalState()
-            // {
-            //     keplerOrbitData = new SimpleKeplerOrbits.KeplerOrbitData(
-            //         eccentricity: elements.Eccentricity,
-            //         semiMajorAxis: elements.SemiMajorAxis,
-            //         meanAnomalyDeg: elements.MeanAnomaly,
-            //         inclinationDeg: elements.Inclination,
-            //         argOfPerifocusDeg: elements.Periapsis,
-            //         ascendingNodeDeg: elements.AscendingNode,
-            //         attractorMass: attractorMass,
-            //         gConst: gravConst
-            //     );
+            public List<SatelliteData> satellites;
 
-            //     UpdateInternalState();
-            // }
-
-            // public void UpdateExternalState(double deltaTime)
-            // {
-            //     keplerOrbitData.UpdateOrbitDataByTime(deltaTime);
-
-            //     UpdateInternalState();
-            // }
+            public WalkerConstellation() {
+                
+            }
         }
     }
 }

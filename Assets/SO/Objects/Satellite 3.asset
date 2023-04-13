@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc03ddac993c8ef40859046a8c4039bc, type: 3}
+  m_Name: Satellite 3
+  m_EditorClassIdentifier: 
+  label: Satellite 3
+  itemPrefab: {fileID: 959510204313232932, guid: 813f897af510f9c4d91ec56cbc627e94, type: 3}
+  satelliteData:
+    attractorMass: 0.0001
+    gravConst: 0.0001
+    elements:
+      SemiMajorAxis: 1
+      Eccentricity: 0.045
+      Inclination: 20.76
+      Periapsis: 110.59
+      AscendingNode: 88.9708
+      MeanAnomaly: 328.5176
+    currentMeanAnomaly: 328.98007744321825
+    <position>k__BackingField:
+      x: 0.4879788653093203
+      y: 0.8887350653685938
+      z: -0.17911097299980366
+    <velocity>k__BackingField:
+      x: 7731047.183358067
+      y: -398157.7026103813
+      z: -3583182.4894156144
+  updateViewInterval: 0.1

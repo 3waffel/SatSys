@@ -7,22 +7,31 @@ public class StationLogic : ObjectLogic
     public float altitude;
     public float longitude;
     public float latitude;
+    public float elevation = 5f;
 
     public SatelliteLogic[] satellites;
+
+    public List<double> timeWindows;
+    private double currentTime;
+    private bool wasVisible = false;
 
     protected override void Start()
     {
         base.Start();
 
         transform.SetParent(targetPlanet);
-        UpdatePosition();
+        InitializePosition();
 
         satellites = FindObjectsOfType<SatelliteLogic>();
+        EventManager.TimeChanged += delegate(double time)
+        {
+            currentTime = time;
+        };
     }
 
     private void Update()
     {
-        bool isConnected = false;
+        bool isVisible = false;
         foreach (var sat in satellites)
         {
             var direction = sat.transform.position - transform.position;
@@ -30,22 +39,28 @@ public class StationLogic : ObjectLogic
             if (raycast && sat.gameObject == hit.collider.gameObject)
             {
                 Debug.DrawRay(transform.position, direction, Color.red);
-                isConnected = true;
+                isVisible = true;
             }
             else
             {
                 Debug.DrawRay(transform.position, direction, Color.green);
             }
         }
+
+        if (isVisible ^ wasVisible)
+        {
+            timeWindows.Add(currentTime);
+        }
+        wasVisible = isVisible;
     }
 
     /// <summary>
     /// Position relative to the parent planet
     /// </summary>
-    private void UpdatePosition()
+    private void InitializePosition()
     {
-        var basis = targetPlanet.gameObject.GetComponent<PlanetLogic>().SphereRadius;
-        transform.localPosition = new Vector3(altitude + basis, 0, 0);
+        var planetRadius = targetPlanet.gameObject.GetComponent<PlanetLogic>().SphereRadius;
+        transform.localPosition = new Vector3(altitude + planetRadius, 0, 0);
         transform.RotateAround(Vector3.zero, Vector3.up, longitude);
         transform.RotateAround(Vector3.zero, transform.forward, latitude);
     }
