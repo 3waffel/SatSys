@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using SimpleKeplerOrbits;
+using Newtonsoft.Json;
 
 namespace SatSys
 {
@@ -28,9 +28,6 @@ namespace SatSys
 
         public static Vector3 Vector3(double3 vector) =>
             new Vector3((float)vector.x, (float)vector.y, (float)vector.z);
-
-        public static double3 double3(Vector3d vector3D) =>
-            new double3(vector3D.x, vector3D.y, vector3D.z);
 
         public static double SquareMagnitude(double3 vector) =>
             vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;

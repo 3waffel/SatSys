@@ -33,6 +33,9 @@ public class ObjectManager : MonoBehaviour
         {
             foreach (var so in objectCollection)
             {
+                if (so == null)
+                    continue;
+
                 Guid guid = Guid.NewGuid();
                 CreateBrowserObject(guid, so.label);
                 CreateInspectorObject(guid, so);

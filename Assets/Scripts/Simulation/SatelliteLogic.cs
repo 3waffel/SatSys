@@ -9,10 +9,14 @@ public class SatelliteLogic : ObjectLogic
     public SatData.SatelliteData satelliteData = new SatData.SatelliteData();
 
     public float updateViewInterval = 0.3f;
+    public float elevation = 10f;
 
     private Vector3 currentPosition;
     private Vector3 currentVelocity;
     private Vector3 nextPosition;
+
+    public List<SatelliteLogic> visibleSatellites;
+    public List<StationLogic> visibleStations;
 
     protected override void Start()
     {
