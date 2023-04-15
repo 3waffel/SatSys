@@ -60,7 +60,7 @@ public class Timeline : MonoBehaviour
                 {
                     if (float.TryParse(input, out float result))
                     {
-                        timeScale = Mathf.Clamp(result, 0.0001f, 1f);
+                        timeScale = Mathf.Clamp(result, 0.00001f, 1f);
                     }
                 }
             );

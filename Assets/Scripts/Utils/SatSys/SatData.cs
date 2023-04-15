@@ -13,13 +13,16 @@ namespace SatSys
         [Serializable]
         public class SatelliteData
         {
-            public double attractorMass = M;
-            public double gravConst = G;
+            public double attractorMass = MassOfEarth; // (m^3 * kg^-1 * s^-2)
+            public double gravConst = GravConst; // (kg)
+            public double mu => attractorMass * 10e-12 * GravConst; // (km^3 / s^2)
 
             public KeplerianElements elements;
             public double currentMeanAnomaly;
+
+            // degrees per second
             public double meanMotion =>
-                Math.Sqrt((attractorMass * gravConst) / Math.Pow(elements.SemiMajorAxis, 3));
+                Math.Sqrt(mu / Math.Pow(elements.SemiMajorAxis, 3)) * (180 / Math.PI);
 
             [field: SerializeField]
             public double3 position { get; private set; }
@@ -36,27 +39,41 @@ namespace SatSys
             {
                 this.elements = new KeplerianElements
                 {
-                    // Parameters of Moon
-                    SemiMajorAxis = 0.0025,
-                    Eccentricity = 0.0450,
-                    Inclination = 5.2522,
-                    Periapsis = 130.6531,
-                    AscendingNode = 88.9708,
-                    MeanAnomaly = 328.5176,
+                    // Parameters of GSAT0201
+                    SemiMajorAxis = 27977.6, // (km)
+                    Eccentricity = 0.162,
+                    Inclination = 49.850,
+                    Periapsis = 56.198,
+                    AscendingNode = 52.521,
+                    MeanAnomaly = 316.069,
                 };
             }
 
             public void UpdateInternalState()
             {
-                (position, velocity) = KeplerianToCartesian(elements, currentMeanAnomaly);
+                (position, velocity) = Kep2Cart(elements, mu, currentMeanAnomaly);
             }
 
+            // Update current mean anomaly based on elapsed time in seconds
             public void UpdateAnomaly(double time)
             {
-                var elapsedTime = SatDate.GetSeconds(time);
-                currentMeanAnomaly = (elements.MeanAnomaly + elapsedTime * meanMotion) % 360;
+                var elapsedTimeInSeconds = SatDate.GetSeconds(time);
+                currentMeanAnomaly =
+                    (elements.MeanAnomaly + elapsedTimeInSeconds * meanMotion) % 360;
 
                 UpdateInternalState();
+            }
+
+            public List<Vector3> GetOrbit(double timeStep = 0.001)
+            {
+                var positions = new List<Vector3>();
+                for (double ma = 0; ma <= 10; ma += SatDate.GetSeconds(timeStep) * meanMotion)
+                {
+                    var (position, _) = Kep2Cart(elements, mu, ma);
+                    // TODO The output positions are scaled
+                    positions.Add(Vector3(position * Scale));
+                }
+                return positions;
             }
         }
 
@@ -71,9 +88,7 @@ namespace SatSys
 
             public List<SatelliteData> satellites;
 
-            public WalkerConstellation() {
-                
-            }
+            public WalkerConstellation() { }
         }
     }
 }

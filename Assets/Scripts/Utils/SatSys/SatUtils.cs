@@ -12,17 +12,22 @@ namespace SatSys
         /// <summary>
         /// Newtons Gravitational Constant (m^3 * kg^-1 * s^-2)
         /// </summary>
-        public const double G = 6.6743e-11F;
+        public const double GravConst = 6.6743e-11F;
 
         /// <summary>
         /// Mass of Earth (kg)
         /// </summary>
-        public const double M = 5.9721e24F;
+        public const double MassOfEarth = 5.9721e24F;
 
         /// <summary>
-        /// Standard Gravitational Parameter
+        /// Standard Gravitational Parameter (km^3 * s^-2)
         /// </summary>
-        public static double mu => G * M;
+        // public static double mu => GravConst * MassOfEarth;
+        public static double StdGravParam = 398600;
+
+        public const double EarthRadius = 6757; // km
+
+        public static float Scale = (float)(0.5 / EarthRadius);
 
         public const double AU = 1.495978707e11;
 

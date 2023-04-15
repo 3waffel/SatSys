@@ -11,8 +11,6 @@ public class SatelliteLogic : ObjectLogic
     public float updateViewInterval = 0.3f;
     public float elevation = 10f;
 
-    private Vector3 currentPosition;
-    private Vector3 currentVelocity;
     private Vector3 nextPosition;
 
     public List<SatelliteLogic> visibleSatellites;
@@ -24,16 +22,15 @@ public class SatelliteLogic : ObjectLogic
 
         transform.position = new Vector3(0, 0.6f, 0);
         satelliteData.UpdateInternalState();
-        currentPosition = SatUtils.Vector3(satelliteData.position);
-        currentVelocity = SatUtils.Vector3(satelliteData.velocity);
 
         EventManager.TimeChanged += UpdateSatelliteState;
         InvokeRepeating("UpdateViewFromState", 0, updateViewInterval);
+
+        LineManager.UpdateOrbitRenderer(satelliteData, transform);
     }
 
     void Update()
     {
-        // transform.RotateAround(Vector3.zero, Vector3.right, Time.deltaTime * 10);
         transform.position = Vector3.Lerp(
             transform.position,
             targetPlanet.position + nextPosition,
@@ -48,8 +45,6 @@ public class SatelliteLogic : ObjectLogic
 
     void UpdateViewFromState()
     {
-        // var nextPosition = currentPosition + Time.deltaTime * currentVelocity;
-        nextPosition = SatUtils.Vector3(satelliteData.position);
-        // transform.position = nextPosition;
+        nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
     }
 }
