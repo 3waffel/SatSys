@@ -24,6 +24,9 @@ namespace SatSys
             public double meanMotion =>
                 Math.Sqrt(mu / Math.Pow(elements.SemiMajorAxis, 3)) * (180 / Math.PI);
 
+            public double orbitTimeStep = 0.001;
+            public double orbitMaxMeanAnomaly = 10;
+
             [field: SerializeField]
             public double3 position { get; private set; }
 
@@ -64,13 +67,16 @@ namespace SatSys
                 UpdateInternalState();
             }
 
-            public List<Vector3> GetOrbit(double timeStep = 0.001)
+            public List<Vector3> GetScaledOrbit()
             {
                 var positions = new List<Vector3>();
-                for (double ma = 0; ma <= 10; ma += SatDate.GetSeconds(timeStep) * meanMotion)
+                for (
+                    double ma = 0;
+                    ma <= orbitMaxMeanAnomaly;
+                    ma += SatDate.GetSeconds(orbitTimeStep) * meanMotion
+                )
                 {
                     var (position, _) = Kep2Cart(elements, mu, ma);
-                    // TODO The output positions are scaled
                     positions.Add(Vector3(position * Scale));
                 }
                 return positions;

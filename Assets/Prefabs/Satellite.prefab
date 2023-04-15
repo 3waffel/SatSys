@@ -26,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 959510203061537897}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.04, y: 0, z: 0}
-  m_LocalScale: {x: 0.05, y: 0.002, z: 0.025}
+  m_LocalPosition: {x: 0.015, y: 0, z: 0}
+  m_LocalScale: {x: 0.02, y: 0.001, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 959510204313232932}
@@ -109,8 +109,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 959510203525645078}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.04, y: 0, z: 0}
-  m_LocalScale: {x: 0.05, y: 0.002, z: 0.025}
+  m_LocalPosition: {x: -0.015, y: 0, z: 0}
+  m_LocalScale: {x: 0.02, y: 0.001, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 959510204313232932}
@@ -176,7 +176,8 @@ GameObject:
   m_Component:
   - component: {fileID: 959510204313232932}
   - component: {fileID: 959510204313232933}
-  - component: {fileID: 5787602169290108779}
+  - component: {fileID: 685396624037172967}
+  - component: {fileID: 2417650893098073351}
   m_Layer: 0
   m_Name: Satellite
   m_TagString: Untagged
@@ -226,59 +227,22 @@ MonoBehaviour:
       AscendingNode: 88.9708
       MeanAnomaly: 328.5176
     currentMeanAnomaly: 0
-    keplerOrbitData:
-      GravConst: 1
-      Position:
-        x: 0
-        y: 0
-        z: 0
-      AttractorDistance: 0
-      AttractorMass: 0
-      Velocity:
-        x: 0
-        y: 0
-        z: 0
-      MG: 0
-      SemiMinorAxis: 0
-      SemiMajorAxis: 0
-      FocalParameter: 0
-      Eccentricity: 0
-      Period: 0
-      TrueAnomaly: 0
-      MeanAnomaly: 0
-      EccentricAnomaly: 0
-      MeanMotion: 0
-      Periapsis:
-        x: 0
-        y: 0
-        z: 0
-      PeriapsisDistance: 0
-      Apoapsis:
-        x: 0
-        y: 0
-        z: 0
-      ApoapsisDistance: 0
-      CenterPoint:
-        x: 0
-        y: 0
-        z: 0
-      OrbitCompressionRatio: 0
-      OrbitNormal:
-        x: 0
-        y: 0
-        z: 0
-      SemiMinorAxisBasis:
-        x: 0
-        y: 0
-        z: 0
-      SemiMajorAxisBasis:
-        x: 0
-        y: 0
-        z: 0
-      OrbitNormalDotEclipticNormal: 0
+    orbitTimeStep: 0.001
+    orbitMaxMeanAnomaly: 10
+    <position>k__BackingField:
+      x: 0
+      y: 0
+      z: 0
+    <velocity>k__BackingField:
+      x: 0
+      y: 0
+      z: 0
   updateViewInterval: 0.3
---- !u!136 &5787602169290108779
-CapsuleCollider:
+  elevation: 10
+  visibleSatellites: []
+  visibleStations: []
+--- !u!135 &685396624037172967
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -287,10 +251,21 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.012514043
-  m_Height: 0.04971859
-  m_Direction: 2
-  m_Center: {x: 0.000086518936, y: 0, z: -0.00014070794}
+  serializedVersion: 2
+  m_Radius: 0.01
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!122 &2417650893098073351
+Halo:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959510204313232931}
+  m_Enabled: 1
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_Size: 0.02
 --- !u!1 &7573184986671630817
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,7 +293,7 @@ Transform:
   m_GameObject: {fileID: 7573184986671630817}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 959510204313232932}

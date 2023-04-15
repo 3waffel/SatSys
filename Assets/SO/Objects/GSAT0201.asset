@@ -24,13 +24,15 @@ MonoBehaviour:
       Periapsis: 56.198
       AscendingNode: 52.521
       MeanAnomaly: 316.069
-    currentMeanAnomaly: 324.8601783625296
+    currentMeanAnomaly: 172.82816504825223
+    orbitTimeStep: 0.001
+    orbitMaxMeanAnomaly: 10
     <position>k__BackingField:
-      x: 22340.123799070014
-      y: 5750.017324327618
-      z: -16868.624944758296
+      x: 20425.71092729959
+      y: -3875.239234986564
+      z: -22010.402082503697
     <velocity>k__BackingField:
-      x: 0.006413374444788095
-      y: 0.3024175973262371
-      z: 0.21210161174786912
+      x: 0.1119248022971205
+      y: 0.3077216840217746
+      z: 0.11666919107426173
   updateViewInterval: 0.1

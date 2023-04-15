@@ -5,6 +5,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using static SatSys.SatData;
 using static SatSys.SatUtils;
+using static SatSys.SatElements;
 
 namespace SatSys
 {
@@ -26,7 +27,7 @@ namespace SatSys
         public struct RecordGroup
         {
             public double elapsedTime;
-            public Vector3 position;
+            public FixedVector3 position;
         }
 
         /// <summary>
@@ -43,19 +44,22 @@ namespace SatSys
             for (double t = 0; t < timeSpan; t += timeStep)
             {
                 data.UpdateAnomaly(t);
-                result.Add(new RecordGroup { elapsedTime = t, position = Vector3(data.position), });
+                result.Add(
+                    new RecordGroup { elapsedTime = t, position = new FixedVector3(data.position), }
+                );
             }
             return result;
         }
 
         public class SatTask
         {
-            public List<StationRecord> stations;
-            public List<SatelliteRecord> satellites;
+            public List<StationRecord> stationRecords;
+            public List<SatelliteRecord> satelliteRecords;
+            public double timeSpan = 1;
 
             public SatTask()
             {
-                stations = new List<StationRecord>
+                stationRecords = new List<StationRecord>
                 {
                     new StationRecord
                     {
@@ -70,14 +74,56 @@ namespace SatSys
                         latitude = -58.96,
                     },
                 };
-                satellites = new List<SatelliteRecord>
+                satelliteRecords = new List<SatelliteRecord>
                 {
                     new SatelliteRecord
                     {
-                        name = "Satellite 1",
-                        records = GenerateSatelliteRecord(new SatelliteData()),
+                        name = "GSAT0201",
+                        records = GenerateSatelliteRecord(
+                            new SatelliteData(
+                                new KeplerianElements
+                                {
+                                    SemiMajorAxis = 27977.6,
+                                    Eccentricity = 0.162,
+                                    Inclination = 49.850,
+                                    Periapsis = 56.198,
+                                    AscendingNode = 52.521,
+                                    MeanAnomaly = 316.069,
+                                }
+                            ),
+                            timeSpan
+                        ),
+                    },
+                    new SatelliteRecord
+                    {
+                        name = "GSAT0202",
+                        records = GenerateSatelliteRecord(
+                            new SatelliteData(
+                                new KeplerianElements
+                                {
+                                    SemiMajorAxis = 27977.6,
+                                    Eccentricity = 0.162,
+                                    Inclination = 49.850,
+                                    Periapsis = 56.198,
+                                    AscendingNode = 52.521,
+                                    MeanAnomaly = 136.069,
+                                }
+                            ),
+                            timeSpan
+                        ),
                     },
                 };
+            }
+
+            public SatTask(
+                List<StationRecord> stationRecords,
+                List<SatelliteRecord> satelliteRecords,
+                double timeSpan = 1
+            )
+            {
+                this.stationRecords = stationRecords;
+                this.satelliteRecords = satelliteRecords;
+                this.timeSpan = timeSpan;
             }
         }
     }

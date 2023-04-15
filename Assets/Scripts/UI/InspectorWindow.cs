@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using SatSys;
 
 public class InspectorWindow
     : MonoBehaviour,
@@ -17,7 +18,7 @@ public class InspectorWindow
     private float _rotationSensitivity = 1f;
 
     [SerializeField]
-    private float _scrollSensitivity = 20f;
+    private float _scrollSensitivity = 10f;
 
     private bool _isPointerInside = false;
     private bool _isPointerDown = false;
@@ -50,8 +51,19 @@ public class InspectorWindow
             {
                 var scroll = Input.GetAxis("Mouse ScrollWheel");
                 var camera = _inspectorCamera.GetComponent<Camera>();
-                camera.fieldOfView -= scroll * _scrollSensitivity;
-                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, 20, 150);
+                // camera.fieldOfView -= scroll * _scrollSensitivity;
+                // camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, 20, 150);
+
+                // TODO fix distance limit
+                var targetPosition =
+                    _inspectorCamera.transform.position
+                    + new Vector3(0, 0, scroll * _scrollSensitivity);
+                var distance = Vector3.Distance(
+                    _inspectorCamera.transform.parent.position,
+                    targetPosition
+                );
+                if (distance >= 2 && distance <= 20)
+                    _inspectorCamera.transform.Translate(0, 0, scroll * _scrollSensitivity);
             }
         }
 
@@ -62,11 +74,7 @@ public class InspectorWindow
                 Cursor.lockState = CursorLockMode.Locked;
                 var x = Input.GetAxis("Mouse X") * _rotationSensitivity;
                 var y = Input.GetAxis("Mouse Y") * _rotationSensitivity;
-                _inspectorCamera.transform.RotateAround(
-                    Vector3.zero,
-                    Vector3.up,
-                    x
-                );
+                _inspectorCamera.transform.RotateAround(Vector3.zero, Vector3.up, x);
                 _inspectorCamera.transform.RotateAround(
                     Vector3.zero,
                     _inspectorCamera.transform.right,

@@ -52,21 +52,17 @@ public static class LineManager
         lc.transform.SetParent(parent);
     }
 
-    public static void UpdateOrbitRenderer(
-        SatelliteData data,
-        Transform parent,
-        double timeStep = 0.001
-    )
+    public static void UpdateOrbitRenderer(SatelliteData data, Transform parent)
     {
         var lc = parent.GetComponentInChildren<LineController>();
         if (lc == null)
         {
-            var positions = data.GetOrbit(timeStep);
+            var positions = data.GetScaledOrbit();
             CreateLine(positions.ToArray(), parent);
         }
         else
         {
-            lc.points = data.GetOrbit(timeStep).ToArray();
+            lc.points = data.GetScaledOrbit().ToArray();
         }
     }
 }

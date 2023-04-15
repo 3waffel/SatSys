@@ -593,7 +593,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.17833334, y: 1}
-  m_AnchoredPosition: {x: -0.6069336, y: -31.070007}
+  m_AnchoredPosition: {x: -0.6069336, y: -31.070251}
   m_SizeDelta: {x: -1.2130127, y: -60.099976}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &249615505
@@ -1071,7 +1071,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.67300004, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.44995117, y: -30.575867}
+  m_AnchoredPosition: {x: -0.44995117, y: -30.57611}
   m_SizeDelta: {x: 0.9000244, y: -60.900024}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &372475863
@@ -1543,7 +1543,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inspectorCamera: {fileID: 1921765230}
   _rotationSensitivity: 1
-  _scrollSensitivity: 20
+  _scrollSensitivity: 1
 --- !u!114 &514694225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2488,6 +2488,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 14440a7b1fbe3ad418f350b9f2848b53, type: 2}
   - {fileID: 11400000, guid: 3e9120cc8fb52bb4a813b15fb512b113, type: 2}
   - {fileID: 11400000, guid: e65a99d3071ef2f4c8ad30e05b5fa8b8, type: 2}
+  - {fileID: 11400000, guid: 4fd08638f84bedc4ca51545ce51320eb, type: 2}
+  - {fileID: 11400000, guid: ef7af97a03ea96048ba52e7faa57df75, type: 2}
+  - {fileID: 11400000, guid: d63e49be44d796344b907be80c1842a4, type: 2}
   targetScene: {fileID: 1711993878}
   targetPlanet: {fileID: 1421594760}
   satellitePrefab: {fileID: 0}
@@ -3188,7 +3191,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.17833334, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -314.44983, y: -31.07489}
+  m_AnchoredPosition: {x: -314.44983, y: -31.075134}
   m_SizeDelta: {x: -628.9, y: -60.11}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1307425001
@@ -4359,8 +4362,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1738724289}
   m_HandleRect: {fileID: 1738724288}
   m_Direction: 0
-  m_Value: -0.00007629627
-  m_Size: 0.99692494
+  m_Value: 0
+  m_Size: 0.9969248
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

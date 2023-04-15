@@ -22,7 +22,7 @@ namespace SatSys
         /// <summary>
         /// Standard Gravitational Parameter (km^3 * s^-2)
         /// </summary>
-        // public static double mu => GravConst * MassOfEarth;
+        // public static double mu => GravConst * 10e-12 * MassOfEarth;
         public static double StdGravParam = 398600;
 
         public const double EarthRadius = 6757; // km
@@ -36,5 +36,47 @@ namespace SatSys
 
         public static double SquareMagnitude(double3 vector) =>
             vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
+
+        public struct FixedDouble3
+        {
+            public double x;
+            public double y;
+            public double z;
+
+            public FixedDouble3(double3 vector)
+            {
+                x = vector.x;
+                y = vector.y;
+                z = vector.z;
+            }
+
+            public FixedDouble3(Vector3 vector)
+            {
+                x = vector.x;
+                y = vector.y;
+                z = vector.z;
+            }
+        }
+
+        public struct FixedVector3
+        {
+            public float x;
+            public float y;
+            public float z;
+
+            public FixedVector3(Vector3 vector)
+            {
+                x = vector.x;
+                y = vector.y;
+                z = vector.z;
+            }
+
+            public FixedVector3(double3 vector)
+            {
+                x = (float)vector.x;
+                y = (float)vector.y;
+                z = (float)vector.z;
+            }
+        }
     }
 }

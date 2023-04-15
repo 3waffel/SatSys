@@ -10,29 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc03ddac993c8ef40859046a8c4039bc, type: 3}
-  m_Name: GSAT0202
+  m_Name: GSAT0204
   m_EditorClassIdentifier: 
-  label: GSAT0202
+  label: GSAT0204
   itemPrefab: {fileID: 959510204313232932, guid: 813f897af510f9c4d91ec56cbc627e94, type: 3}
   satelliteData:
     attractorMass: 5.972099959139834e+24
     gravConst: 0.00000000006674300001563438
     elements:
-      SemiMajorAxis: 27977.6
-      Eccentricity: 0.162
-      Inclination: 49.85
-      Periapsis: 56.198
-      AscendingNode: 52.521
-      MeanAnomaly: 136.069
-    currentMeanAnomaly: 352.8281653675938
+      SemiMajorAxis: 29599.8
+      Eccentricity: 0
+      Inclination: 56
+      Periapsis: 0
+      AscendingNode: 77.632
+      MeanAnomaly: 352.653
+    currentMeanAnomaly: 75.09901567519091
     orbitTimeStep: 0.001
     orbitMaxMeanAnomaly: 10
     <position>k__BackingField:
-      x: 6876.392000623553
-      y: 21070.974961237767
-      z: 8729.708135500525
+      x: 10823.987183151054
+      y: 26583.242484908293
+      z: -7233.303566666369
     <velocity>k__BackingField:
-      x: -0.3323179055595404
-      y: -0.04116878688340436
-      z: 0.28292784204147325
+      x: -0.1683667897572471
+      y: 0.14765648551212307
+      z: 0.2907092402602567
   updateViewInterval: 0.1
