@@ -25,8 +25,6 @@ public class SatelliteLogic : ObjectLogic
 
         EventManager.TimeChanged += UpdateSatelliteState;
         InvokeRepeating("UpdateViewFromState", 0, updateViewInterval);
-
-        LineManager.UpdateOrbitRenderer(satelliteData, transform);
     }
 
     void Update()
@@ -47,4 +45,6 @@ public class SatelliteLogic : ObjectLogic
     {
         nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
     }
+
+    void CheckVisibleStations() { }
 }

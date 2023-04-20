@@ -41,6 +41,7 @@ public class ObjectManager : MonoBehaviour
                 CreateInspectorObject(guid, so);
             }
         }
+        EventManager.OnObjectUpdated();
     }
 
     void BrowserSpawnTest()

@@ -54,16 +54,9 @@ public class InspectorWindow
                 // camera.fieldOfView -= scroll * _scrollSensitivity;
                 // camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, 20, 150);
 
-                // TODO fix distance limit
-                var targetPosition =
-                    _inspectorCamera.transform.position
-                    + new Vector3(0, 0, scroll * _scrollSensitivity);
-                var distance = Vector3.Distance(
-                    _inspectorCamera.transform.parent.position,
-                    targetPosition
-                );
-                if (distance >= 2 && distance <= 20)
-                    _inspectorCamera.transform.Translate(0, 0, scroll * _scrollSensitivity);
+                // TODO limit scroll movement
+                _inspectorCamera.transform.LookAt(_inspectorCamera.parent.transform);
+                _inspectorCamera.transform.Translate(0, 0, scroll * _scrollSensitivity, Space.Self);
             }
         }
 

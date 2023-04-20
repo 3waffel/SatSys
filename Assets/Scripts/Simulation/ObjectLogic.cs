@@ -25,6 +25,7 @@ public class ObjectLogic : MonoBehaviour
         if (_guid == guid)
         {
             this.gameObject.SetActive(flag);
+            EventManager.OnObjectUpdated();
         }
     }
 }

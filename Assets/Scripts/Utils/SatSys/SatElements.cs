@@ -119,13 +119,13 @@ namespace SatSys
         }
 
         /// <summary>
-        /// Convert Kaplerian Orbit elements to Cartesian State Vector
         /// Convert Elements into position and velocity vectors in the current mean anomaly
         /// </summary>
         /// <param name="elements">Keplerian elements of the orbit</param>
         /// <param name="mu">(km^3 * s^-2)</param>
         /// <param name="currentMeanAnomaly">Current mean anomaly of the orbit</param>
         /// <returns>A tuple containing position and velocity vectors</returns>
+        [Obsolete]
         public static (double3, double3) KeplerianToCartesian(
             KeplerianElements elements,
             double mu,

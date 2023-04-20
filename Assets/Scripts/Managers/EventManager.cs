@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using static SatSys.SatData;
 
 public static class EventManager
 {
     // Main Logic Events
     public static UnityAction<ObjectSO> ObjectCreated;
+    public static UnityAction ObjectUpdated;
     public static UnityAction<double> TimeChanged;
     public static UnityAction<double, double> TimeRangeChanged;
 
     public static void OnObjectCreated(ObjectSO so) => ObjectCreated?.Invoke(so);
+
+    public static void OnObjectUpdated() => ObjectUpdated?.Invoke();
 
     /// <summary>
     /// Elapsed time since start time
