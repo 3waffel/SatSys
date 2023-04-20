@@ -43,15 +43,4 @@ public static class EventManager
     /// Send info from the scene object to the display window
     /// /// </summary>
     public static void OnObjectInfoSent(ObjectLogic logic) => ObjectInfoSent?.Invoke(logic);
-
-    // UI Menu Events
-    public static UnityAction OpenButtonClicked;
-    public static UnityAction SaveButtonClicked;
-    public static UnityAction CreateButtonClicked;
-
-    public static void OnOpenButtonClicked() => OpenButtonClicked?.Invoke();
-
-    public static void OnSaveButtonClicked() => SaveButtonClicked?.Invoke();
-
-    public static void OnCreateButtonClicked() => CreateButtonClicked?.Invoke();
 }

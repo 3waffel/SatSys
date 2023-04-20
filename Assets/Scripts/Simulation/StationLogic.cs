@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SatSys;
 
 public class StationLogic : ObjectLogic
 {
@@ -14,6 +15,7 @@ public class StationLogic : ObjectLogic
     public List<double> timeWindows;
     private double currentTime;
     private bool wasVisible = false;
+    public Collider obstacle;
 
     protected override void Start()
     {
@@ -27,24 +29,34 @@ public class StationLogic : ObjectLogic
         {
             currentTime = time;
         };
+        if (obstacle == null)
+        {
+            obstacle = targetPlanet.Find("Sphere").GetComponent<SphereCollider>();
+        }
     }
 
     private void Update()
     {
+        UpdateTimeWindows();
+    }
+
+    /// <summary>
+    /// Position relative to the parent planet
+    /// </summary>
+    private void InitializePosition()
+    {
+        var planetRadius = targetPlanet.gameObject.GetComponent<PlanetLogic>().SphereRadius;
+        transform.localPosition = new Vector3(altitude * SatUtils.Scale + planetRadius, 0, 0);
+        transform.RotateAround(Vector3.zero, Vector3.up, longitude);
+        transform.RotateAround(Vector3.zero, transform.forward, latitude);
+    }
+
+    public void UpdateTimeWindows()
+    {
         bool isVisible = false;
         foreach (var sat in satellites)
         {
-            var direction = sat.transform.position - transform.position;
-            var raycast = Physics.Raycast(transform.position, direction, out RaycastHit hit);
-            if (raycast && sat.gameObject == hit.collider.gameObject)
-            {
-                Debug.DrawRay(transform.position, direction, Color.red);
-                isVisible = true;
-            }
-            else
-            {
-                Debug.DrawRay(transform.position, direction, Color.green);
-            }
+            isVisible = CheckSatelliteVisibility(sat);
         }
 
         if (isVisible ^ wasVisible)
@@ -54,14 +66,14 @@ public class StationLogic : ObjectLogic
         wasVisible = isVisible;
     }
 
-    /// <summary>
-    /// Position relative to the parent planet
-    /// </summary>
-    private void InitializePosition()
+    public bool CheckSatelliteVisibility(SatelliteLogic satellite)
     {
-        var planetRadius = targetPlanet.gameObject.GetComponent<PlanetLogic>().SphereRadius;
-        transform.localPosition = new Vector3(altitude + planetRadius, 0, 0);
-        transform.RotateAround(Vector3.zero, Vector3.up, longitude);
-        transform.RotateAround(Vector3.zero, transform.forward, latitude);
+        var direction = satellite.transform.position - transform.position;
+        var raycast = Physics.Raycast(transform.position, direction, out RaycastHit hit);
+
+        bool isVisible = !(raycast && obstacle == hit.collider);
+        if (isVisible)
+            Debug.DrawRay(transform.position, direction, Color.red);
+        return isVisible;
     }
 }

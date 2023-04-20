@@ -17,15 +17,24 @@ public class ObjectLogic : MonoBehaviour
 
     protected virtual void Start()
     {
-        EventManager.BrowserItemToggled += OnObjectToggled;
+        EventManager.BrowserItemToggled += SwitchActive;
+        EventManager.BrowserItemSelected += ShowInfo;
     }
 
-    protected virtual void OnObjectToggled(Guid guid, bool flag)
+    protected virtual void SwitchActive(Guid guid, bool flag)
     {
         if (_guid == guid)
         {
             this.gameObject.SetActive(flag);
             EventManager.OnObjectUpdated();
+        }
+    }
+
+    protected virtual void ShowInfo(Guid guid)
+    {
+        if (_guid == guid)
+        {
+            EventManager.OnObjectInfoSent(this);
         }
     }
 }

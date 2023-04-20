@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2935226409205383185}
   - component: {fileID: 2935226409205383191}
   - component: {fileID: 6651201202138411578}
+  - component: {fileID: 9042069593756479857}
   m_Layer: 0
   m_Name: Station
   m_TagString: Untagged
@@ -101,6 +102,9 @@ MonoBehaviour:
   altitude: 0
   longitude: 0
   latitude: 0
+  elevation: 5
+  satellites: []
+  timeWindows: []
 --- !u!64 &6651201202138411578
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -115,3 +119,15 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!122 &9042069593756479857
+Halo:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2935226409205383186}
+  m_Enabled: 1
+  m_Color:
+    serializedVersion: 2
+    rgba: 4287729663
+  m_Size: 0.02

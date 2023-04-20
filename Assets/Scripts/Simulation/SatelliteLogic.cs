@@ -9,9 +9,12 @@ public class SatelliteLogic : ObjectLogic
     public SatData.SatelliteData satelliteData = new SatData.SatelliteData();
 
     public float updateViewInterval = 0.3f;
-    public float elevation = 10f;
-
     private Vector3 nextPosition;
+
+    // Check visibility of stations
+    public float elevation = 10f;
+    public float maxVisibleDistance = 1f;
+    public Collider obstacle;
 
     public List<SatelliteLogic> visibleSatellites;
     public List<StationLogic> visibleStations;
@@ -25,6 +28,11 @@ public class SatelliteLogic : ObjectLogic
 
         EventManager.TimeChanged += UpdateSatelliteState;
         InvokeRepeating("UpdateViewFromState", 0, updateViewInterval);
+
+        if (obstacle == null)
+        {
+            obstacle = targetPlanet.Find("Sphere").GetComponent<SphereCollider>();
+        }
     }
 
     void Update()
@@ -46,5 +54,29 @@ public class SatelliteLogic : ObjectLogic
         nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
     }
 
-    void CheckVisibleStations() { }
+    // TODO
+    public bool CheckStationVisibility(StationLogic station)
+    {
+        var direction = station.transform.position - transform.position;
+        var distance = direction.magnitude;
+        var angle = Vector3.Angle(Vector3.up, direction);
+        var raycast = Physics.Raycast(transform.position, direction, out RaycastHit hit);
+
+        bool isBlocked =
+            angle > elevation
+            && distance > maxVisibleDistance
+            && raycast
+            && obstacle == hit.collider;
+        bool isVisible = !isBlocked;
+        return isVisible;
+    }
+
+    public bool CheckSatelliteVisibility(SatelliteLogic satellite)
+    {
+        var direction = satellite.transform.position - transform.position;
+        var raycast = Physics.Raycast(transform.position, direction, out RaycastHit hit);
+
+        bool isVisible = !(raycast && obstacle == hit.collider);
+        return isVisible;
+    }
 }

@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System;
-using MType = MenuButtonSO.MenuButtonType;
-using static EventManager;
 
 public class MenuButtonLogic : MonoBehaviour
 {
     [SerializeField]
-    private MenuButtonSO _buttonSO;
+    private List<MenuButtonSO> _buttons;
 
     [SerializeField]
     private Transform _submenuPrefab;
@@ -21,41 +18,7 @@ public class MenuButtonLogic : MonoBehaviour
     private void Start()
     {
         GetComponent<Toggle>().onValueChanged.AddListener(OnMenuToggled);
-
-        GetComponentInChildren<TMP_Text>().text = _buttonSO.label;
-
-        foreach (var eventType in _buttonSO.eventList)
-        {
-            var item = Instantiate(_submenuPrefab);
-            item.SetParent(_submenuContainer);
-            item.transform.localScale = Vector2.one;
-
-            // Create submenu button instances
-            item.GetComponentInChildren<TMP_Text>().text = eventType.ToString();
-            item.GetComponent<Button>()
-                .onClick.AddListener(
-                    delegate
-                    {
-                        OnSubmenuClicked(eventType);
-                    }
-                );
-        }
-    }
-
-    private void OnSubmenuClicked(MType eventType)
-    {
-        switch (eventType)
-        {
-            case (MType.Open):
-                OnOpenButtonClicked();
-                break;
-            case (MType.Save):
-                OnSaveButtonClicked();
-                break;
-            case (MType.Create):
-                OnCreateButtonClicked();
-                break;
-        }
+        _buttons.ForEach((button) => button.RegisterButton(_submenuPrefab, _submenuContainer));
     }
 
     public void OnMenuToggled(bool flag)

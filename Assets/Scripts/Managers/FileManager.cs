@@ -8,13 +8,7 @@ using SFB;
 
 public class FileManager : MonoBehaviour
 {
-    void Start()
-    {
-        EventManager.OpenButtonClicked += OpenTask;
-        EventManager.SaveButtonClicked += SaveTask;
-    }
-
-    private void OpenTask()
+    public static void OpenTask()
     {
         StandaloneFileBrowser.OpenFilePanelAsync(
             "Open File",
@@ -34,7 +28,7 @@ public class FileManager : MonoBehaviour
         );
     }
 
-    private void SaveTask()
+    public static void SaveTask()
     {
         var task = new SatTask();
         StandaloneFileBrowser.SaveFilePanelAsync(

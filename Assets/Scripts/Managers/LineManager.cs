@@ -20,6 +20,16 @@ public class LineManager : MonoBehaviour
     public AdjacencyGraph<SatelliteLogic, Edge<SatelliteLogic>> satGraph =
         new AdjacencyGraph<SatelliteLogic, Edge<SatelliteLogic>>();
 
+    public List<StationLogic> stations;
+
+    struct LineData
+    {
+        float startWidth;
+        float endWidth;
+        Color lineColor;
+        Material lineMaterial;
+    }
+
     void Awake()
     {
         if (lineMaterial == null)
@@ -132,17 +142,10 @@ public class LineManager : MonoBehaviour
                 if (vertices[i] != vertices[j])
                 {
                     var edge = new Edge<SatelliteLogic>(vertices[i], vertices[j]);
-                    var direction = vertices[j].transform.position - vertices[i].transform.position;
-                    var raycast = Physics.Raycast(
-                        vertices[i].transform.position,
-                        direction,
-                        out RaycastHit hit
-                    );
-                    if (raycast && vertices[j].gameObject == hit.collider.gameObject)
-                    {
-                        if (!satGraph.Edges.Contains(edge))
-                            satGraph.AddEdge(edge);
-                    }
+                    bool isVisible = vertices[i].CheckSatelliteVisibility(vertices[j]);
+
+                    if (isVisible && !satGraph.ContainsEdge(edge))
+                        satGraph.AddEdge(edge);
                 }
             }
         }
