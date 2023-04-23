@@ -32,7 +32,7 @@ public class PlanetLogic : MonoBehaviour
     /// </summary>
     void InitializeRotation()
     {
-        sphere.RotateAround(Vector3.zero, Vector3.up, -130);
+        sphere.RotateAround(Vector3.zero, Vector3.up, -40);
     }
 
     void UpdateEarthRotation(double epoch)

@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using SatSys;
+using UnityEngine.Events;
 
 public class SatelliteLogic : ObjectLogic
 {
     public SatData.SatelliteData satelliteData = new SatData.SatelliteData();
 
-    public float updateViewInterval = 0.3f;
+    public float updatePositionInterval = 0.3f;
+    public float lerpInterval = 0.1f;
     private Vector3 nextPosition;
+
+    UnityAction updatePositionAction;
+    UnityAction updateViewAction;
 
     // Check visibility of stations
     public float elevation = 10f;
     public float maxVisibleDistance = 1f;
-    public Collider obstacle;
+    public Collider obstacleCollider;
 
     public List<SatelliteLogic> visibleSatellites;
     public List<StationLogic> visibleStations;
@@ -23,35 +28,50 @@ public class SatelliteLogic : ObjectLogic
     {
         base.Start();
 
-        transform.position = new Vector3(0, 0.6f, 0);
         satelliteData.UpdateInternalState();
+        transform.position = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
 
-        EventManager.TimeChanged += UpdateSatelliteState;
-        InvokeRepeating("UpdateViewFromState", 0, updateViewInterval);
+        EventManager.TimeChanged += (time) => satelliteData.UpdateAnomaly(time);
+        EventManager.TimeScaleChanged += (timeScale) =>
+            lerpInterval = Mathf.Clamp(timeScale * 30, 0.1f, 1);
 
-        if (obstacle == null)
+        InitializeDirectMovement();
+        InvokeRepeating(nameof(UpdatePositionTask), 0, updatePositionInterval);
+
+        if (obstacleCollider == null)
         {
-            obstacle = targetPlanet.Find("Sphere").GetComponent<SphereCollider>();
+            obstacleCollider = targetPlanet.Find("Sphere").GetComponent<SphereCollider>();
         }
     }
 
     void Update()
     {
-        transform.position = Vector3.Lerp(
-            transform.position,
-            targetPlanet.position + nextPosition,
-            0.1f
-        );
+        updateViewAction?.Invoke();
     }
 
-    void UpdateSatelliteState(double time)
+    void UpdatePositionTask()
     {
-        satelliteData.UpdateAnomaly(time);
+        updatePositionAction?.Invoke();
     }
 
-    void UpdateViewFromState()
+    // movement based on elements calculation
+    void InitializeDirectMovement()
     {
-        nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
+        updatePositionAction = () =>
+            nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
+        updateViewAction = () =>
+            transform.position = Vector3.Lerp(
+                transform.position,
+                targetPlanet.position + nextPosition,
+                lerpInterval
+            );
+    }
+
+    // movement based on rotation and ecllipse shape
+    void InitializeEllipseMovement()
+    {
+        updatePositionAction = () => { };
+        updateViewAction = () => { };
     }
 
     // TODO
@@ -66,7 +86,7 @@ public class SatelliteLogic : ObjectLogic
             angle > elevation
             && distance > maxVisibleDistance
             && raycast
-            && obstacle == hit.collider;
+            && obstacleCollider == hit.collider;
         bool isVisible = !isBlocked;
         return isVisible;
     }
@@ -76,7 +96,13 @@ public class SatelliteLogic : ObjectLogic
         var direction = satellite.transform.position - transform.position;
         var raycast = Physics.Raycast(transform.position, direction, out RaycastHit hit);
 
-        bool isVisible = !(raycast && obstacle == hit.collider);
+        bool isVisible = !(raycast && obstacleCollider == hit.collider);
         return isVisible;
+    }
+
+    // check if is a link is blocked by central body, in a mathematical way
+    public bool CentralBodyBlockChecker(float radius, float elevation)
+    {
+        return false;
     }
 }

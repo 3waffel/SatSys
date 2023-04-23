@@ -8,7 +8,7 @@ using System;
 public class SatelliteSO : ObjectSO
 {
     public SatData.SatelliteData satelliteData;
-    public float updateViewInterval = 0.1f;
+    public float updatePositionInterval = 0.1f;
 
     public override Transform Spawn(Guid guid)
     {
@@ -16,7 +16,7 @@ public class SatelliteSO : ObjectSO
 
         var satellite = item.GetComponent<SatelliteLogic>();
         satellite.satelliteData = satelliteData;
-        satellite.updateViewInterval = updateViewInterval;
+        satellite.updatePositionInterval = updatePositionInterval;
         return item;
     }
 }
