@@ -39,6 +39,22 @@ PrefabInstance:
       propertyPath: _buttonSO
       value: 
       objectReference: {fileID: 11400000, guid: 81e6874fe95ce844fa4c95727ba9a529, type: 2}
+    - target: {fileID: 1052777429296729893, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
+      propertyPath: _buttons.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1052777429296729893, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
+      propertyPath: _buttons.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 5479a7d6900528b42a72fe1a2a09b0b9, type: 2}
+    - target: {fileID: 1052777429296729893, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
+      propertyPath: _buttons.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 9adde6d039712144bab61b53e898e8e3, type: 2}
+    - target: {fileID: 1052777429296729893, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
+      propertyPath: _buttons.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: ddedde03662ab1b4595c1d792af0d043, type: 2}
     - target: {fileID: 2231514754198542920, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

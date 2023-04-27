@@ -96,4 +96,8 @@ public class ObjectManager : MonoBehaviour
         logic.targetPlanet = targetPlanet;
         logic.satelliteData = data;
     }
+
+    void ClearScene() { }
+
+    public void LoadTask() { }
 }

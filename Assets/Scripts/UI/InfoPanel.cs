@@ -37,9 +37,15 @@ public class InfoPanel : MonoBehaviour
         {
             case SatelliteLogic satellite:
                 var data = satellite.satelliteData;
+                string pos =
+                    $"x:{data.position.x}\n\t\ty: {data.position.y}\n\t\tz: {data.position.z}";
+                string vel =
+                    $"x:{data.velocity.x}\n\t\ty: {data.velocity.y}\n\t\tz: {data.velocity.z}";
                 CreateLabel("Name:\t", satellite.name);
-                CreateLabel("Position:\t", data.position.ToString());
-                CreateLabel("Velocity:\t", data.velocity.ToString());
+                CreateLabel("Position:\t", pos);
+                CreateLabel("Velocity:\t", vel);
+                CreateLabel("Target:\t", satellite.targetStation?.name);
+                CreateLabel("Receiver:\t", satellite.receiverStation?.name);
                 break;
             case StationLogic station:
                 CreateLabel("Name:\t", station.name);

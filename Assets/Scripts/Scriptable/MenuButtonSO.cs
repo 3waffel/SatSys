@@ -13,10 +13,19 @@ public class MenuButtonSO : ScriptableObject
 
     public enum EventType
     {
+        None,
+
+        // file management
         Open,
         Save,
+
+        // object management
         Create,
-        None,
+
+        // lines visibility
+        Orbits,
+        Links,
+        Routes,
     }
 
     public EventType type;
@@ -50,6 +59,27 @@ public class MenuButtonSO : ScriptableObject
                 break;
             case (EventType.Create):
                 action += () => Debug.Log("Create Button Clicked");
+                break;
+            case (EventType.Orbits):
+                action += () =>
+                {
+                    var orbitsHolder = LineManager.LM.orbits.gameObject;
+                    orbitsHolder.SetActive(!orbitsHolder.activeSelf);
+                };
+                break;
+            case (EventType.Links):
+                action += () =>
+                {
+                    var linksHolder = LineManager.LM.links.gameObject;
+                    linksHolder.SetActive(!linksHolder.activeSelf);
+                };
+                break;
+            case (EventType.Routes):
+                action += () =>
+                {
+                    var routesHolder = LineManager.LM.routes.gameObject;
+                    routesHolder.SetActive(!routesHolder.activeSelf);
+                };
                 break;
         }
     }

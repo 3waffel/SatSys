@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using TMPro;
 
+[DisallowMultipleComponent]
 public class ObjectLogic : MonoBehaviour
 {
     [SerializeField]

@@ -30,11 +30,12 @@ public class FileManager : MonoBehaviour
 
     public static void SaveTask()
     {
+        // TODO save objects from scene
         var task = new SatTask();
         StandaloneFileBrowser.SaveFilePanelAsync(
             "Save File",
             "",
-            "test",
+            "output",
             "json",
             (path) =>
             {

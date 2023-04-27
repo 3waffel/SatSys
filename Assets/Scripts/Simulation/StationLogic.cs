@@ -12,10 +12,19 @@ public class StationLogic : ObjectLogic
 
     public SatelliteLogic[] satellites;
 
+    /// <summary>
+    /// a series of switch time between visible and invisible,
+    /// start from visible time
+    /// </summary>
     public List<double> timeWindows;
+    public bool enableCheckingTimeWindows = false;
     private double currentTime;
     private bool wasVisible = false;
-    public Collider obstacle;
+
+    /// <summary>
+    /// collider of the central body, defined by `targetPlanet`
+    /// </summary>
+    public Collider obstacleCollider;
 
     protected override void Start()
     {
@@ -25,23 +34,24 @@ public class StationLogic : ObjectLogic
         InitializePosition();
 
         satellites = FindObjectsOfType<SatelliteLogic>();
-        EventManager.TimeChanged += delegate(double time)
+        EventManager.TimeChanged += (time) => currentTime = time;
+        EventManager.ObjectUpdated += () => satellites = FindObjectsOfType<SatelliteLogic>();
+
+        if (obstacleCollider == null)
         {
-            currentTime = time;
-        };
-        if (obstacle == null)
-        {
-            obstacle = targetPlanet.Find("Sphere").GetComponent<SphereCollider>();
+            obstacleCollider = targetPlanet.Find("Sphere").GetComponent<SphereCollider>();
         }
     }
 
     private void Update()
     {
-        UpdateTimeWindows();
+        if (enableCheckingTimeWindows)
+            UpdateTimeWindows();
     }
 
     /// <summary>
-    /// Position relative to the parent planet
+    /// initialize station's position relative to the parent planet,
+    /// using `altitude`, `longitude` and `latitude`
     /// </summary>
     private void InitializePosition()
     {
@@ -51,6 +61,9 @@ public class StationLogic : ObjectLogic
         transform.RotateAround(Vector3.zero, transform.forward, latitude);
     }
 
+    /// <summary>
+    /// update `timeWindows` by checking visibility every frame
+    /// </summary>
     public void UpdateTimeWindows()
     {
         bool isVisible = false;
@@ -66,14 +79,34 @@ public class StationLogic : ObjectLogic
         wasVisible = isVisible;
     }
 
+    /// <summary>
+    /// check visibility of a satellite from the station, judging from obstacle's collider
+    /// </summary>
+    /// <param name="satellite">target satellite</param>
+    /// <returns></returns>
     public bool CheckSatelliteVisibility(SatelliteLogic satellite)
     {
         var direction = satellite.transform.position - transform.position;
         var raycast = Physics.Raycast(transform.position, direction, out RaycastHit hit);
 
-        bool isVisible = !(raycast && obstacle == hit.collider);
-        if (isVisible)
-            Debug.DrawRay(transform.position, direction, Color.red);
+        bool isVisible = !(raycast && obstacleCollider == hit.collider);
         return isVisible;
+    }
+
+    /// <summary>
+    /// return a list of satellites that can be seen from the station
+    /// </summary>
+    /// <returns>visible satellites</returns>
+    public List<SatelliteLogic> GetVisibleSatellites()
+    {
+        var visibleSatellites = new List<SatelliteLogic>();
+        foreach (var sat in satellites)
+        {
+            if (CheckSatelliteVisibility(sat))
+            {
+                visibleSatellites.Add(sat);
+            }
+        }
+        return visibleSatellites;
     }
 }

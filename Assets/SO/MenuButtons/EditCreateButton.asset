@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b943cf0bc392da344a86a7efa27844da, type: 3}
-  m_Name: SaveButton
+  m_Name: EditCreateButton
   m_EditorClassIdentifier: 
-  label: Save
-  type: 1
+  label: Create
+  type: 3

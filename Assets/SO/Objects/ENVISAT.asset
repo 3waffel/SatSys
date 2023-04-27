@@ -24,15 +24,17 @@ MonoBehaviour:
       Periapsis: 0
       AscendingNode: 161.5
       MeanAnomaly: 263.19
-    currentMeanAnomaly: 113.52862008350348
+    currentMeanAnomaly: 268.5848240150071
     orbitTimeStep: 0.0001
     orbitMaxMeanAnomaly: 10
     <position>k__BackingField:
-      x: -6744.230762155495
-      y: 274.4494428163032
-      z: 2371.6024329373786
+      x: 1595.2349256747716
+      y: 4150.995459868009
+      z: -5605.245270314742
     <velocity>k__BackingField:
-      x: 0.1660811483046759
-      y: -0.49860969156451074
-      z: 0.5300911187235721
-  updateViewInterval: 0.1
+      x: -0.7035398817933507
+      y: 0.24872016027082822
+      z: -0.015936016517826498
+  updatePositionInterval: 0.1
+  targetStationName: Station Antarctic
+  receiverStationName: Station Beijing

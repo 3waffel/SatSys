@@ -2054,10 +2054,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62a442b1ab52e404dbe3bdfe795a1c1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineMaterial: {fileID: 2100000, guid: a333d6ec98f5bba49b48688c15a563c8, type: 2}
+  lineMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  orbitColor: {r: 0, g: 1, b: 1, a: 1}
+  satLinkColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   orbits: {fileID: 0}
   links: {fileID: 0}
-  stations: []
+  routes: {fileID: 0}
 --- !u!1 &1021059630
 GameObject:
   m_ObjectHideFlags: 0
@@ -3897,7 +3899,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1738724289}
   m_HandleRect: {fileID: 1738724288}
   m_Direction: 0
-  m_Value: 0.000076293945
+  m_Value: 0.000030517578
   m_Size: 0.9969248
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5231,7 +5233,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1983234347}
   m_HandleRect: {fileID: 1983234346}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

@@ -11,40 +11,27 @@ public class LineManager : MonoBehaviour
 {
     public Material lineMaterial;
 
-    public static Material sharedOrbitMaterial;
-    public static Material sharedSatLinkMaterial;
+    public Color orbitColor = Color.cyan;
+    public Color satLinkColor = Color.yellow;
 
+    // holder for different lines
     public Transform orbits;
     public Transform links;
+    public Transform routes;
 
-    public AdjacencyGraph<SatelliteLogic, Edge<SatelliteLogic>> satGraph =
+    /// <summary>
+    /// record of visible connections among satellites
+    /// </summary>
+    private AdjacencyGraph<SatelliteLogic, Edge<SatelliteLogic>> satGraph =
         new AdjacencyGraph<SatelliteLogic, Edge<SatelliteLogic>>();
 
-    public List<StationLogic> stations;
-
-    struct LineData
-    {
-        float startWidth;
-        float endWidth;
-        Color lineColor;
-        Material lineMaterial;
-    }
+    public static LineManager LM => FindObjectOfType<LineManager>();
 
     void Awake()
     {
         if (lineMaterial == null)
         {
             lineMaterial = new Material(Shader.Find("Unlit/Color"));
-        }
-        if (sharedOrbitMaterial == null)
-        {
-            sharedOrbitMaterial = new Material(lineMaterial);
-            sharedOrbitMaterial.color = Color.cyan;
-        }
-        if (sharedSatLinkMaterial == null)
-        {
-            sharedSatLinkMaterial = new Material(lineMaterial);
-            sharedSatLinkMaterial.color = Color.yellow;
         }
 
         if (orbits == null)
@@ -59,6 +46,12 @@ public class LineManager : MonoBehaviour
             go.transform.SetParent(transform);
             links = go.transform;
         }
+        if (routes == null)
+        {
+            var go = new GameObject("Routes");
+            go.transform.SetParent(transform);
+            routes = go.transform;
+        }
     }
 
     void Start()
@@ -72,11 +65,20 @@ public class LineManager : MonoBehaviour
         if (satGraph.IsVerticesEmpty)
             return;
 
-        UpdateEdgesByVisibility();
-        UpdateSatLinksByEdges();
+        UpdateGraphByVisibility();
+        UpdateSatLinksByGraph();
+        UpdateStationRoutes();
     }
 
-    public void CreateLine(Vector3[] points, Transform parent, Material lineMaterial)
+    public void CreateLine(
+        Vector3[] points,
+        Transform parent,
+        Material lineMaterial,
+        Color startColor = default,
+        Color endColor = default,
+        float startWidth = 0.005f,
+        float endWidth = 0.005f
+    )
     {
         GameObject go = new GameObject("Line");
         go.transform.SetParent(parent);
@@ -84,20 +86,42 @@ public class LineManager : MonoBehaviour
 
         var lr = go.GetComponent<LineRenderer>();
         lr.positionCount = points.Length;
-        lr.startWidth = 0.005f;
-        lr.material = lineMaterial;
         lr.SetPositions(points);
+        lr.material = lineMaterial;
+        lr.startColor = startColor;
+        lr.endColor = endColor;
+        lr.startWidth = startWidth;
+        lr.endWidth = endWidth;
     }
 
-    public void CreateDirectLine(
+    /// <summary>
+    /// helper method to create a straight line
+    /// </summary>
+    public void CreateSimpleLine(
         Vector3 from,
         Vector3 to,
         Transform parent,
-        Material lineMaterial
-    ) => CreateLine(new Vector3[] { from, to }, parent, lineMaterial);
+        Material lineMaterial,
+        Color lineColor,
+        float lineWidth = 0.005f
+    ) =>
+        CreateLine(
+            new Vector3[] { from, to },
+            parent,
+            lineMaterial,
+            lineColor,
+            lineColor,
+            lineWidth,
+            lineWidth
+        );
 
+    /// <summary>
+    /// create or update orbits when satellites change
+    /// </summary>
     public void UpdateOrbits()
     {
+        if (orbits == null)
+            return;
         foreach (Transform orbit in orbits)
         {
             GameObject.Destroy(orbit.gameObject);
@@ -105,16 +129,24 @@ public class LineManager : MonoBehaviour
 
         foreach (var logic in satGraph.Vertices)
         {
-            UpdateOrbitRenderer(logic.satelliteData, orbits);
+            CreateOrbitFromData(logic.satelliteData, orbits);
         }
     }
 
-    public void UpdateOrbitRenderer(SatelliteData data, Transform parent)
+    /// <summary>
+    /// create orbit from satellite data
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="parent">holder of the orbit</param>
+    public void CreateOrbitFromData(SatelliteData data, Transform parent)
     {
         var positions = data.GetScaledOrbit();
-        CreateLine(positions.ToArray(), parent, sharedOrbitMaterial);
+        CreateLine(positions.ToArray(), parent, lineMaterial, orbitColor, orbitColor);
     }
 
+    /// <summary>
+    /// create or update vertices in the graph when satellites change
+    /// </summary>
     public void UpdateGraph()
     {
         if (!satGraph.IsVerticesEmpty)
@@ -124,7 +156,11 @@ public class LineManager : MonoBehaviour
         satGraph.AddVertexRange(logics);
     }
 
-    public void UpdateEdgesByVisibility()
+    /// <summary>
+    /// update edges of the graph based on visibility between vertices,
+    /// executed every frame
+    /// </summary>
+    public void UpdateGraphByVisibility()
     {
         if (satGraph.IsVerticesEmpty)
             return;
@@ -151,8 +187,14 @@ public class LineManager : MonoBehaviour
         }
     }
 
-    public void UpdateSatLinksByEdges()
+    /// <summary>
+    /// destroy previous links and create new links,
+    /// executed every frame
+    /// </summary>
+    public void UpdateSatLinksByGraph()
     {
+        if (links == null)
+            return;
         foreach (Transform link in links)
         {
             GameObject.Destroy(link.gameObject);
@@ -164,7 +206,39 @@ public class LineManager : MonoBehaviour
         {
             var from = edge.Source.transform.position;
             var to = edge.Target.transform.position;
-            CreateDirectLine(from, to, links, sharedSatLinkMaterial);
+            CreateSimpleLine(from, to, links, lineMaterial, satLinkColor);
+        }
+    }
+
+    public void UpdateStationRoutes()
+    {
+        if (routes == null)
+            return;
+        foreach (Transform route in routes)
+        {
+            GameObject.Destroy(route.gameObject);
+        }
+
+        if (satGraph.IsVerticesEmpty)
+            return;
+
+        var vertices = satGraph.Vertices.ToArray();
+        foreach (var vertex in vertices)
+        {
+            if (vertex.linkRoute != null)
+            {
+                var points = new List<Vector3>();
+                vertex.linkRoute.ForEach((logic) => points.Add(logic.transform.position));
+                CreateLine(
+                    points.ToArray(),
+                    routes,
+                    lineMaterial,
+                    Color.red,
+                    Color.green,
+                    0.05f,
+                    0.1f
+                );
+            }
         }
     }
 }

@@ -11,16 +11,18 @@ namespace SatSys
 {
     public static class SatRecord
     {
-        public struct StationRecord
+        public struct Station
         {
             public string name;
             public double longitude;
             public double latitude;
         }
 
-        public struct SatelliteRecord
+        public struct Satellite
         {
             public string name;
+            public string targetStationName;
+            public string receiverStationName;
             public List<RecordGroup> records;
         }
 
@@ -53,34 +55,34 @@ namespace SatSys
 
         public class SatTask
         {
-            public List<StationRecord> stationRecords;
-            public List<SatelliteRecord> satelliteRecords;
+            public List<Station> stations;
+            public List<Satellite> satellites;
             public double timeSpan = 1;
 
             public SatTask()
             {
-                stationRecords = new List<StationRecord>
+                stations = new List<Station>
                 {
-                    new StationRecord
+                    new Station
                     {
-                        name = "Beijing",
+                        name = "Station Beijing",
                         longitude = 116.46,
                         latitude = 39.92,
                     },
-                    new StationRecord
+                    new Station
                     {
-                        name = "Antarctic",
+                        name = "Station Antarctic",
                         longitude = -62.21,
                         latitude = -58.96,
                     },
                 };
-                satelliteRecords = new List<SatelliteRecord>
+                satellites = new List<Satellite>
                 {
-                    new SatelliteRecord
+                    new Satellite
                     {
                         name = "GSAT0201",
                         records = GenerateSatelliteRecord(
-                            new SatelliteData(
+                            data: new SatelliteData(
                                 new KeplerianElements
                                 {
                                     SemiMajorAxis = 27977.6,
@@ -91,14 +93,16 @@ namespace SatSys
                                     MeanAnomaly = 316.069,
                                 }
                             ),
-                            timeSpan
+                            timeSpan: timeSpan
                         ),
+                        targetStationName = "Station Antarctic",
+                        receiverStationName = "Station Beijing",
                     },
-                    new SatelliteRecord
+                    new Satellite
                     {
                         name = "GSAT0202",
                         records = GenerateSatelliteRecord(
-                            new SatelliteData(
+                            data: new SatelliteData(
                                 new KeplerianElements
                                 {
                                     SemiMajorAxis = 27977.6,
@@ -109,20 +113,16 @@ namespace SatSys
                                     MeanAnomaly = 136.069,
                                 }
                             ),
-                            timeSpan
+                            timeSpan: timeSpan
                         ),
                     },
                 };
             }
 
-            public SatTask(
-                List<StationRecord> stationRecords,
-                List<SatelliteRecord> satelliteRecords,
-                double timeSpan = 1
-            )
+            public SatTask(List<Station> stations, List<Satellite> satellites, double timeSpan = 1)
             {
-                this.stationRecords = stationRecords;
-                this.satelliteRecords = satelliteRecords;
+                this.stations = stations;
+                this.satellites = satellites;
                 this.timeSpan = timeSpan;
             }
         }
