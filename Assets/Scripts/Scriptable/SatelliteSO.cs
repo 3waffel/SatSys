@@ -8,7 +8,6 @@ using System;
 public class SatelliteSO : ObjectSO
 {
     public SatData.SatelliteData satelliteData;
-    public float updatePositionInterval = 0.1f;
 
     public string targetStationName;
     public string receiverStationName;
@@ -19,7 +18,6 @@ public class SatelliteSO : ObjectSO
 
         var satellite = item.GetComponent<SatelliteLogic>();
         satellite.satelliteData = satelliteData;
-        satellite.updatePositionInterval = updatePositionInterval;
         satellite.targetStationName = targetStationName;
         satellite.receiverStationName = receiverStationName;
         return item;

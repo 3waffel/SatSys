@@ -10,14 +10,16 @@ public class SatelliteLogic : ObjectLogic
     public SatData.SatelliteData satelliteData;
 
     /// <summary>
-    /// interval to update `nextPosition`
+    /// interval to update `nextPosition`,
+    /// should be updated when `timeScale` changes
     /// </summary>
-    public float updatePositionInterval = 0.3f;
+    private float updatePositionInterval = 0.001f;
 
     /// <summary>
-    /// interval to update view position using `Lerp`
+    /// interpolation value to update view position using `Lerp`,
+    /// between 0 and 1
     /// </summary>
-    public float lerpInterval = 0.1f;
+    private float lerpCount = 0f;
 
     /// <summary>
     /// next position the satellite will lerp to,
@@ -68,11 +70,9 @@ public class SatelliteLogic : ObjectLogic
         receiverStation = targetPlanet.Find(receiverStationName).GetComponent<StationLogic>();
 
         EventManager.TimeChanged += (time) => satelliteData.UpdateAnomaly(time);
-        EventManager.TimeScaleChanged += (timeScale) =>
-            lerpInterval = Mathf.Clamp(timeScale * 30, 0.1f, 1);
+        EventManager.TimeScaleChanged += (timeScale) => updatePositionInterval = 1e-5f / timeScale;
 
         InitializeDirectMovement();
-        InvokeRepeating(nameof(UpdatePositionTask), 0, updatePositionInterval);
 
         if (obstacleCollider == null)
         {
@@ -86,11 +86,6 @@ public class SatelliteLogic : ObjectLogic
         UpdateLinkRoute();
     }
 
-    void UpdatePositionTask()
-    {
-        updatePositionAction?.Invoke();
-    }
-
     /// <summary>
     /// initialize movement based on direct calculation of orbital elements,
     /// `nextPosition` is provided by
@@ -100,11 +95,22 @@ public class SatelliteLogic : ObjectLogic
         updatePositionAction = () =>
             nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
         updateViewAction = () =>
+        {
+            if (lerpCount < 1.0f)
+            {
+                lerpCount += Time.deltaTime / updatePositionInterval;
+            }
+            else
+            {
+                lerpCount = 0;
+                updatePositionAction?.Invoke();
+            }
             transform.position = Vector3.Lerp(
                 transform.position,
                 targetPlanet.position + nextPosition,
-                lerpInterval
+                lerpCount
             );
+        };
     }
 
     // TODO movement based on rotation and ecllipse shape
@@ -180,8 +186,12 @@ public class SatelliteLogic : ObjectLogic
         return null;
     }
 
-    // the route will be only traced one layer
-    public void UpdateLinkRoute()
+    /// <summary>
+    /// update `linkRoute` every frame,
+    /// targetStation -> currentSatellite -> relaySatellites -> destStation
+    /// </summary>
+    /// <param name="relay">numbder of relay satellites</param>
+    public void UpdateLinkRoute(int relay = 1)
     {
         if (targetStation == null || receiverStation == null || targetStation == receiverStation)
         {
