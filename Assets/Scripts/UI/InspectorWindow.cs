@@ -43,7 +43,7 @@ public class InspectorWindow
         _isPointerDown = false;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (_isPointerInside)
         {

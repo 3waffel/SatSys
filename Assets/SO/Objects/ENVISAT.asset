@@ -18,23 +18,22 @@ MonoBehaviour:
     attractorMass: 5.972099959139834e+24
     gravConst: 0.00000000006674300001563438
     elements:
-      SemiMajorAxis: 7155
+      SemiMajorAxis: 8944
       Eccentricity: 0.000103
-      Inclination: 51.6
+      Inclination: 106.1
       Periapsis: 0
       AscendingNode: 161.5
       MeanAnomaly: 263.19
-    currentMeanAnomaly: 268.5848240150071
+    currentMeanAnomaly: 89.34259041404619
     orbitTimeStep: 0.0001
     orbitMaxMeanAnomaly: 10
     <position>k__BackingField:
-      x: 1595.2349256747716
-      y: 4150.995459868009
-      z: -5605.245270314742
+      x: -801.849932628518
+      y: 2838.2070110140903
+      z: 8443.5591823988
     <velocity>k__BackingField:
-      x: -0.7035398817933507
-      y: 0.24872016027082822
-      z: -0.015936016517826498
-  updatePositionInterval: 0.1
-  targetStationName: Station Antarctic
+      x: 0.6329800020003847
+      y: -0.17551768549761168
+      z: 0.11918134969227388
+  targetStationName: Station LA
   receiverStationName: Station Beijing

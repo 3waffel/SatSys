@@ -57,7 +57,7 @@ public class StationLogic : ObjectLogic
     {
         var planetRadius = targetPlanet.gameObject.GetComponent<PlanetLogic>().SphereRadius;
         transform.localPosition = new Vector3(altitude * SatUtils.Scale + planetRadius, 0, 0);
-        transform.RotateAround(Vector3.zero, Vector3.up, longitude);
+        transform.RotateAround(Vector3.zero, Vector3.up, -longitude);
         transform.RotateAround(Vector3.zero, transform.forward, latitude);
     }
 
@@ -69,7 +69,7 @@ public class StationLogic : ObjectLogic
         bool isVisible = false;
         foreach (var sat in satellites)
         {
-            isVisible = CheckSatelliteVisibility(sat);
+            isVisible = LogicalSatelliteVisibilityChecker(sat);
         }
 
         if (isVisible ^ wasVisible)
@@ -84,13 +84,19 @@ public class StationLogic : ObjectLogic
     /// </summary>
     /// <param name="satellite">target satellite</param>
     /// <returns></returns>
-    public bool CheckSatelliteVisibility(SatelliteLogic satellite)
+    public bool PhysicalSatelliteVisibilityChecker(SatelliteLogic satellite)
     {
         var direction = satellite.transform.position - transform.position;
         var raycast = Physics.Raycast(transform.position, direction, out RaycastHit hit);
 
         bool isVisible = !(raycast && obstacleCollider == hit.collider);
         return isVisible;
+    }
+
+    // TODO
+    public bool LogicalSatelliteVisibilityChecker(SatelliteLogic satellite)
+    {
+        return satellite.LogicalStationVisibilityChecker(transform.position);
     }
 
     /// <summary>
@@ -102,7 +108,7 @@ public class StationLogic : ObjectLogic
         var visibleSatellites = new List<SatelliteLogic>();
         foreach (var sat in satellites)
         {
-            if (CheckSatelliteVisibility(sat))
+            if (LogicalSatelliteVisibilityChecker(sat))
             {
                 visibleSatellites.Add(sat);
             }

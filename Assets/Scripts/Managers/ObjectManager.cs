@@ -18,7 +18,10 @@ public class ObjectManager : MonoBehaviour
     public Transform targetScene;
     public Transform targetPlanet;
 
-    public Transform satellitePrefab;
+    public Transform defaultSatellitePrefab;
+    public Transform defaultStationPrefab;
+
+    public static ObjectManager OM => FindObjectOfType<ObjectManager>();
 
     void Start()
     {
@@ -72,6 +75,10 @@ public class ObjectManager : MonoBehaviour
     {
         obj.targetScene = targetScene;
         obj.targetPlanet = targetPlanet;
+        if (obj.itemPrefab == null)
+        {
+            obj.itemPrefab = obj is SatelliteSO ? defaultSatellitePrefab : defaultStationPrefab;
+        }
         obj.Spawn(guid);
     }
 
@@ -88,7 +95,7 @@ public class ObjectManager : MonoBehaviour
 
         CreateBrowserObject(guid, label);
 
-        var sat = Instantiate(satellitePrefab);
+        var sat = Instantiate(defaultSatellitePrefab);
         sat.name = label;
         sat.transform.SetParent(targetScene);
         var logic = sat.GetComponent<SatelliteLogic>();
@@ -97,7 +104,24 @@ public class ObjectManager : MonoBehaviour
         logic.satelliteData = data;
     }
 
-    void ClearScene() { }
+    public void ClearScene()
+    {
+        objectCollection.Clear();
+        var objects = FindObjectsOfType<ObjectLogic>();
+        foreach (var obj in objects)
+        {
+            obj.gameObject.SetActive(false);
+            GameObject.Destroy(obj.gameObject);
+        }
+
+        foreach (Transform item in contentContainer)
+        {
+            GameObject.Destroy(item.gameObject);
+        }
+        EventManager.OnObjectUpdated();
+    }
+
+    public void SaveSceme() { }
 
     public void LoadTask() { }
 }

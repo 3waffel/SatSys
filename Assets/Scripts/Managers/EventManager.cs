@@ -12,7 +12,7 @@ public static class EventManager
     public static UnityAction ObjectUpdated;
     public static UnityAction<double> TimeChanged;
     public static UnityAction<double, double> TimeRangeChanged;
-    public static UnityAction<float> TimeScaleChanged;
+    public static UnityAction<float> TimeStepChanged;
 
     public static void OnObjectCreated(ObjectSO so) => ObjectCreated?.Invoke(so);
 
@@ -27,7 +27,7 @@ public static class EventManager
     public static void OnTimeRangeChanged(double startTime, double endTime) =>
         TimeRangeChanged?.Invoke(startTime, endTime);
 
-    public static void OnTimeScaleChange(float timeScale) => TimeScaleChanged?.Invoke(timeScale);
+    public static void OnTimeStepChange(float timeScale) => TimeStepChanged?.Invoke(timeScale);
 
     // UI Browser Events
     public static UnityAction<Guid, bool> BrowserItemToggled;

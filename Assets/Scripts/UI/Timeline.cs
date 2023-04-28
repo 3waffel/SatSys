@@ -11,18 +11,33 @@ public class Timeline : MonoBehaviour
     private Slider _slider;
 
     public TMP_InputField valueInput;
-    public TMP_InputField timeScaleInput;
+    public TMP_InputField timeStepInput;
 
     [SerializeField]
     private bool _isPaused = false;
 
-    public float timeScale = 0.001f;
+    public static float timeStep = 0.001f;
 
-    public double startDate = SatDate.startJulianDate;
+    public static double startDate = SatDate.startJulianDate;
+    public static double endDate = SatDate.endJulianDate;
+
+    void Awake()
+    {
+        if (valueInput == null)
+        {
+            valueInput = transform.Find("ValueInput").GetComponent<TMP_InputField>();
+        }
+        if (timeStepInput == null)
+        {
+            timeStepInput = transform.Find("TimeStepInput").GetComponent<TMP_InputField>();
+        }
+    }
 
     void Start()
     {
         _slider = GetComponentInChildren<Slider>();
+        _slider.minValue = 0;
+        _slider.maxValue = (float)(endDate - startDate);
         _slider.onValueChanged.AddListener(
             delegate(float value)
             {
@@ -52,21 +67,22 @@ public class Timeline : MonoBehaviour
             );
         }
 
-        if (timeScaleInput != null)
+        if (timeStepInput != null)
         {
-            timeScaleInput.text = timeScale.ToString();
-            timeScaleInput.onEndEdit.AddListener(
+            timeStepInput.text = timeStep.ToString();
+            timeStepInput.onEndEdit.AddListener(
                 delegate(string input)
                 {
                     if (float.TryParse(input, out float result))
                     {
-                        timeScale = Mathf.Clamp(result, 0.00001f, 1f);
-                        EventManager.OnTimeScaleChange(timeScale);
+                        timeStep = Mathf.Clamp(result, 0.00001f, 1f);
+                        EventManager.OnTimeStepChange(timeStep);
                     }
                 }
             );
         }
 
+        // time pause
         var toggle = GetComponentInChildren<Toggle>();
         toggle.isOn = false;
         toggle.onValueChanged.AddListener(
@@ -77,11 +93,11 @@ public class Timeline : MonoBehaviour
         );
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (!_isPaused)
         {
-            _slider.value += Time.deltaTime * timeScale;
+            _slider.value += Time.deltaTime * timeStep;
         }
     }
 }

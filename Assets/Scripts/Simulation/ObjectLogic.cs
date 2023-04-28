@@ -25,6 +25,7 @@ public class ObjectLogic : MonoBehaviour
         EventManager.BrowserItemToggled += SwitchActive;
         EventManager.BrowserItemSelected += OnItemSelected;
 
+        // TODO
         if (uiLabelCanvas == null)
         {
             uiLabelCanvas = transform.parent.Find("LabelCanvas");
@@ -48,9 +49,7 @@ public class ObjectLogic : MonoBehaviour
         if (_guid == guid)
         {
             uiLabelCanvas.gameObject.SetActive(true);
-            uiLabelCanvas.SetParent(transform);
-            uiLabelCanvas.localPosition = Vector2.up * 0.1f;
-            uiLabelCanvas.localScale = Vector3.one;
+            uiLabelCanvas.GetComponent<FacingCamera>().holder = transform;
             uiLabel.text = name;
             EventManager.OnObjectInfoSent(this);
         }
@@ -60,6 +59,13 @@ public class ObjectLogic : MonoBehaviour
     class FacingCamera : MonoBehaviour
     {
         public Transform targetCamera;
+        public Transform holder;
+
+        void Update()
+        {
+            if (holder != null)
+                transform.position = holder.position + Vector3.up * 0.1f;
+        }
 
         void LateUpdate()
         {

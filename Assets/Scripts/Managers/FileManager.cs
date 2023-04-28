@@ -23,6 +23,7 @@ public class FileManager : MonoBehaviour
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     SatTask task = (SatTask)serializer.Deserialize(file, typeof(SatTask));
+                    ObjectManager.OM.ClearScene();
                 }
             }
         );
@@ -30,8 +31,45 @@ public class FileManager : MonoBehaviour
 
     public static void SaveTask()
     {
-        // TODO save objects from scene
-        var task = new SatTask();
+        var collection = ObjectManager.OM.objectCollection;
+        SatTask task;
+        if (collection.Count == 0)
+        {
+            Debug.Log("Object Collection is empty");
+            task = new SatTask();
+        }
+        else
+        {
+            var stations = new List<Station>();
+            var satellites = new List<Satellite>();
+            foreach (var so in collection)
+            {
+                switch (so)
+                {
+                    case (StationSO stt):
+                        stations.Add(new Station(stt));
+                        break;
+                    case (SatelliteSO sat):
+                        satellites.Add(
+                            new Satellite(
+                                sat,
+                                Timeline.startDate,
+                                Timeline.endDate,
+                                Timeline.timeStep
+                            )
+                        );
+                        break;
+                }
+            }
+            task = new SatTask(
+                stations,
+                satellites,
+                Timeline.startDate,
+                Timeline.endDate,
+                Timeline.timeStep
+            );
+        }
+
         StandaloneFileBrowser.SaveFilePanelAsync(
             "Save File",
             "",

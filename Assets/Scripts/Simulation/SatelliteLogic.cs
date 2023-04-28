@@ -13,7 +13,7 @@ public class SatelliteLogic : ObjectLogic
     /// interval to update `nextPosition`,
     /// should be updated when `timeScale` changes
     /// </summary>
-    private float updatePositionInterval = 0.001f;
+    private float updatePositionInterval = 1e-5f / Timeline.timeStep;
 
     /// <summary>
     /// interpolation value to update view position using `Lerp`,
@@ -70,7 +70,7 @@ public class SatelliteLogic : ObjectLogic
         receiverStation = targetPlanet.Find(receiverStationName).GetComponent<StationLogic>();
 
         EventManager.TimeChanged += (time) => satelliteData.UpdateAnomaly(time);
-        EventManager.TimeScaleChanged += (timeScale) => updatePositionInterval = 1e-5f / timeScale;
+        EventManager.TimeStepChanged += (timeStep) => updatePositionInterval = 1e-5f / timeStep;
 
         InitializeDirectMovement();
 
@@ -121,7 +121,7 @@ public class SatelliteLogic : ObjectLogic
     }
 
     // TODO judging from elevation, distance and obstacle's collider
-    public bool CheckStationVisibility(StationLogic station)
+    public bool PhysicalStationVisibilityChecker(StationLogic station)
     {
         var direction = station.transform.position - transform.position;
         var distance = direction.magnitude;
@@ -136,7 +136,7 @@ public class SatelliteLogic : ObjectLogic
         return isVisible;
     }
 
-    public bool CheckSatelliteVisibility(SatelliteLogic satellite)
+    public bool PhysicalSatelliteVisibilityChecker(SatelliteLogic satellite)
     {
         var direction = satellite.transform.position - transform.position;
         var raycast = Physics.Raycast(transform.position, direction, out RaycastHit hit);
@@ -145,14 +145,41 @@ public class SatelliteLogic : ObjectLogic
         return isVisible;
     }
 
-    // TODO check if is a link is blocked by central body, in a mathematical way
-    public bool CentralBodyBlockChecker(Vector3 position)
+    /// <summary>
+    /// presume that the station is on surface of the planet
+    /// </summary>
+    /// <param name="targetPosition"></param>
+    /// <returns></returns>
+    public bool LogicalStationVisibilityChecker(Vector3 targetPosition)
     {
-        // float centralBodyRadius = 0.5f;
-        Vector3 toCenter = transform.position - targetPlanet.position;
-        Vector3 toTarget = transform.position - position;
-        var angle = Vector3.Angle(toCenter, toTarget);
-        return false;
+        Vector3 targetToCenter = targetPlanet.position - targetPosition;
+        Vector3 targetToSelf = transform.position - targetPosition;
+        var angle = Vector3.Angle(targetToCenter, targetToSelf);
+
+        bool isVisible = angle > 90;
+        return isVisible;
+    }
+
+    /// <summary>
+    /// judging from angle and distance
+    /// </summary>
+    /// <param name="targetPosition"></param>
+    /// <returns></returns>
+    public bool LogicalSatelliteVisibilityChecker(Vector3 targetPosition)
+    {
+        var planetRadius = targetPlanet.gameObject.GetComponent<PlanetLogic>().SphereRadius;
+
+        Vector3 direction = Vector3.Normalize(transform.position - targetPosition);
+        float distance = Vector3
+            .Cross(direction, targetPlanet.position - transform.position)
+            .magnitude;
+
+        Vector3 centerToTarget = targetPosition - targetPlanet.position;
+        Vector3 centerToSelf = transform.position - targetPlanet.position;
+        var angle = Vector3.Angle(centerToTarget, centerToSelf);
+
+        bool isVisible = distance > planetRadius || (distance < planetRadius && angle < 90);
+        return isVisible;
     }
 
     /// <summary>
@@ -173,7 +200,7 @@ public class SatelliteLogic : ObjectLogic
             route.Add(target);
             foreach (var sat in visibles)
             {
-                if (sat.CheckStationVisibility(dest))
+                if (sat.LogicalStationVisibilityChecker(dest.transform.position))
                 {
                     route.Add(sat);
                     break;
@@ -200,11 +227,11 @@ public class SatelliteLogic : ObjectLogic
         }
 
         var route = new List<ObjectLogic>();
-        if (CheckStationVisibility(targetStation))
+        if (LogicalStationVisibilityChecker(targetStation.transform.position))
         {
             route.Add(targetStation);
             route.Add(this);
-            if (CheckStationVisibility(receiverStation))
+            if (LogicalStationVisibilityChecker(receiverStation.transform.position))
             {
                 route.Add(receiverStation);
                 linkRoute = route;
@@ -215,7 +242,7 @@ public class SatelliteLogic : ObjectLogic
                 var visibleSats = receiverStation.GetVisibleSatellites();
                 foreach (var sat in visibleSats)
                 {
-                    if (CheckSatelliteVisibility(sat))
+                    if (LogicalSatelliteVisibilityChecker(sat.transform.position))
                     {
                         route.Add(sat);
                         route.Add(receiverStation);

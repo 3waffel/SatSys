@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8dc67b7bcfad9c644909a0e864797305, type: 3}
-  m_Name: Station 1
+  m_Name: StationLA
   m_EditorClassIdentifier: 
-  label: Station 1
+  label: Station LA
   itemPrefab: {fileID: 2935226409205383187, guid: 1a858e5267922b549899981d2e7f34b4, type: 3}
-  longitude: 0
-  latitude: 0
-  altitude: 0.01
+  longitude: -120
+  latitude: 35
+  altitude: 0
+  elevation: 5

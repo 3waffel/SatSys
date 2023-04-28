@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static SatSys.SatData;
-using static SatSys.SatUtils;
+using SatSys;
 using QuikGraph;
 using System;
 using System.Linq;
@@ -62,9 +62,6 @@ public class LineManager : MonoBehaviour
 
     void Update()
     {
-        if (satGraph.IsVerticesEmpty)
-            return;
-
         UpdateGraphByVisibility();
         UpdateSatLinksByGraph();
         UpdateStationRoutes();
@@ -127,9 +124,13 @@ public class LineManager : MonoBehaviour
             GameObject.Destroy(orbit.gameObject);
         }
 
-        foreach (var logic in satGraph.Vertices)
+        var logics = FindObjectsOfType<SatelliteLogic>();
+        if (logics.Length != 0)
         {
-            CreateOrbitFromData(logic.satelliteData, orbits);
+            foreach (var logic in logics)
+            {
+                CreateOrbitFromData(logic.satelliteData, orbits);
+            }
         }
     }
 
@@ -150,10 +151,13 @@ public class LineManager : MonoBehaviour
     public void UpdateGraph()
     {
         if (!satGraph.IsVerticesEmpty)
+        {
             satGraph.Clear();
+        }
 
         var logics = FindObjectsOfType<SatelliteLogic>();
-        satGraph.AddVertexRange(logics);
+        if (logics.Length != 0)
+            satGraph.AddVertexRange(logics);
     }
 
     /// <summary>
@@ -164,24 +168,32 @@ public class LineManager : MonoBehaviour
     {
         if (satGraph.IsVerticesEmpty)
             return;
-
         var vertices = satGraph.Vertices.ToArray();
-        foreach (var vertex in vertices)
-        {
-            satGraph.ClearEdges(vertex);
-        }
 
         for (int i = 0; i < satGraph.VertexCount - 1; i++)
         {
+            if (vertices[i] == null)
+                continue;
             for (int j = i + 1; j < satGraph.VertexCount; j++)
             {
+                if (vertices[j] == null)
+                    continue;
                 if (vertices[i] != vertices[j])
                 {
-                    var edge = new Edge<SatelliteLogic>(vertices[i], vertices[j]);
-                    bool isVisible = vertices[i].CheckSatelliteVisibility(vertices[j]);
+                    bool isVisible = vertices[i].LogicalSatelliteVisibilityChecker(
+                        vertices[j].transform.position
+                    );
 
-                    if (isVisible && !satGraph.ContainsEdge(edge))
-                        satGraph.AddEdge(edge);
+                    if (isVisible && !satGraph.ContainsEdge(vertices[i], vertices[j]))
+                    {
+                        satGraph.AddEdge(new Edge<SatelliteLogic>(vertices[i], vertices[j]));
+                    }
+                    else if (
+                        !isVisible && satGraph.TryGetEdge(vertices[i], vertices[j], out var edge)
+                    )
+                    {
+                        satGraph.RemoveEdge(edge);
+                    }
                 }
             }
         }
@@ -204,6 +216,9 @@ public class LineManager : MonoBehaviour
             return;
         foreach (var edge in satGraph.Edges)
         {
+            if (edge.Source == null || edge.Target == null)
+                continue;
+
             var from = edge.Source.transform.position;
             var to = edge.Target.transform.position;
             CreateSimpleLine(from, to, links, lineMaterial, satLinkColor);
@@ -221,7 +236,6 @@ public class LineManager : MonoBehaviour
 
         if (satGraph.IsVerticesEmpty)
             return;
-
         var vertices = satGraph.Vertices.ToArray();
         foreach (var vertex in vertices)
         {
@@ -233,9 +247,9 @@ public class LineManager : MonoBehaviour
                     points.ToArray(),
                     routes,
                     lineMaterial,
-                    Color.red,
-                    Color.green,
-                    0.05f,
+                    Color.cyan,
+                    Color.blue,
+                    0.02f,
                     0.1f
                 );
             }
