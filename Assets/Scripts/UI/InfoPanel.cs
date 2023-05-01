@@ -16,15 +16,6 @@ public class InfoPanel : MonoBehaviour
         {
             infoContainer = transform.Find("InfoContainer");
         }
-
-        // var templateObject = new GameObject("TemplateLabel");
-        // templateObject.transform.SetParent(transform);
-        // templateObject.transform.localScale = Vector2.one;
-
-        // var label = templateObject.AddComponent<TextMeshProUGUI>();
-        // label.color = Color.black;
-        // label.fontSize = 16;
-        // label.fontStyle = FontStyles.Bold;
     }
 
     void UpdateInfo(ObjectLogic logic)
@@ -59,7 +50,7 @@ public class InfoPanel : MonoBehaviour
 
     void CreateLabel(string text)
     {
-        var template = transform.Find("TemplateLabel").GetComponent<TextMeshProUGUI>();
+        var template = Loader.Instance.infoLabelTemplate.GetComponent<TextMeshProUGUI>();
         var label = Instantiate(template);
         label.text = text;
         label.transform.SetParent(infoContainer.transform);

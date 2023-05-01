@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using SatSys;
+using UnityEngine.Events;
 
 public class Timeline : MonoBehaviour
 {
@@ -21,6 +22,15 @@ public class Timeline : MonoBehaviour
     public static double startDate = SatDate.startJulianDate;
     public static double endDate = SatDate.endJulianDate;
 
+    static UnityAction<float, double, double, float> ChangeTimeProperties;
+
+    public static void OnChangeTimeProperties(
+        float timeStep,
+        double startDate,
+        double endDate,
+        float epoch = 0
+    ) => ChangeTimeProperties?.Invoke(timeStep, startDate, endDate, epoch);
+
     void Awake()
     {
         if (valueInput == null)
@@ -35,6 +45,8 @@ public class Timeline : MonoBehaviour
 
     void Start()
     {
+        ChangeTimeProperties += UpdateTimeProperties;
+
         _slider = GetComponentInChildren<Slider>();
         _slider.minValue = 0;
         _slider.maxValue = (float)(endDate - startDate);
@@ -99,5 +111,23 @@ public class Timeline : MonoBehaviour
         {
             _slider.value += Time.deltaTime * timeStep;
         }
+    }
+
+    public void UpdateTimeProperties(
+        float timeStep,
+        double startDate,
+        double endDate,
+        float epoch = 0
+    )
+    {
+        Timeline.timeStep = timeStep;
+        Timeline.startDate = startDate;
+        Timeline.endDate = endDate;
+        _slider.maxValue = (float)(endDate - startDate);
+        _slider.value = Mathf.Clamp(epoch, _slider.minValue, _slider.maxValue);
+        valueInput.text = SatDate.GetDateTime(startDate + _slider.value).ToString();
+        timeStepInput.text = timeStep.ToString();
+        EventManager.OnTimeChanged(epoch);
+        EventManager.OnTimeStepChange(timeStep);
     }
 }

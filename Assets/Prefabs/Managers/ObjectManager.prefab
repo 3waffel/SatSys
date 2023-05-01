@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3541605866386338351
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3541605866386338350}
+  - component: {fileID: 3541605866386338349}
+  m_Layer: 0
+  m_Name: ObjectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3541605866386338350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3541605866386338351}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3541605866386338349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3541605866386338351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4c7f921e06aa894389eb015f3220afd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contentContainer: {fileID: 0}
+  browserItemPrefab: {fileID: 4696844386833269393, guid: 841c359d39d9346408ba9df6055a3ca8, type: 3}
+  objectCollection:
+  - {fileID: 11400000, guid: 9adbe3006cd4ad2448c5aa0b6fcb043b, type: 2}
+  - {fileID: 11400000, guid: 14440a7b1fbe3ad418f350b9f2848b53, type: 2}
+  - {fileID: 11400000, guid: e0e0b7aa2d641f4438937e3ff81ec26e, type: 2}
+  - {fileID: 11400000, guid: 16a379f5a8978954cade6431e34a628a, type: 2}
+  - {fileID: 11400000, guid: d63e49be44d796344b907be80c1842a4, type: 2}
+  - {fileID: 11400000, guid: 4fd08638f84bedc4ca51545ce51320eb, type: 2}
+  - {fileID: 11400000, guid: 3e9120cc8fb52bb4a813b15fb512b113, type: 2}
+  - {fileID: 11400000, guid: e65a99d3071ef2f4c8ad30e05b5fa8b8, type: 2}
+  - {fileID: 11400000, guid: ef7af97a03ea96048ba52e7faa57df75, type: 2}
+  targetScene: {fileID: 0}
+  targetPlanet: {fileID: 0}
+  defaultSatellitePrefab: {fileID: 959510204313232932, guid: 813f897af510f9c4d91ec56cbc627e94, type: 3}
+  defaultStationPrefab: {fileID: 2935226409205383187, guid: 1a858e5267922b549899981d2e7f34b4, type: 3}

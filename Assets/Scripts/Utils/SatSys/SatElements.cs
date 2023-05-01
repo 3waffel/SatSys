@@ -262,5 +262,8 @@ namespace SatSys
 
             return (position, velocity);
         }
+
+        [Serializable]
+        public struct TwoLineElements { }
     }
 }

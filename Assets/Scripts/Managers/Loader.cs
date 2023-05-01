@@ -2,24 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConfigManager : MonoBehaviour
+[DisallowMultipleComponent]
+public class Loader : MonoBehaviour
 {
-    public static ConfigManager Instance;
+    public static Loader Instance;
+
+    public Transform objectLabelCanvas;
+    public Transform infoLabelTemplate;
 
     void Awake()
     {
         if (Instance == null)
         {
+            DontDestroyOnLoad(gameObject);
             Instance = this;
         }
         else if (Instance != this)
         {
             Destroy(gameObject);
         }
-    }
-
-    void Start()
-    {
-        // Screen.fullScreenMode = FullScreenMode.Windowed;
     }
 }

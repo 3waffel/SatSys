@@ -14,21 +14,25 @@ namespace SatSys
         public class Station
         {
             public string name;
-            public double longitude;
-            public double latitude;
+            public float longitude;
+            public float latitude;
 
             public Station() { }
 
             public Station(StationSO so)
             {
-                name = so.label;
+                name = so.name;
                 longitude = so.longitude;
                 latitude = so.latitude;
             }
 
-            public StationSO ToSO()
+            public StationSO ToStationSO()
             {
-                return new StationSO();
+                var so = ScriptableObject.CreateInstance<StationSO>();
+                so.name = name;
+                so.longitude = longitude;
+                so.latitude = latitude;
+                return so;
             }
         }
 
@@ -37,7 +41,7 @@ namespace SatSys
             public string name;
             public string targetStationName;
             public string receiverStationName;
-            public List<RecordGroup> records;
+            public List<TimedPosition> records;
 
             public Satellite() { }
 
@@ -48,19 +52,14 @@ namespace SatSys
                 double timeStep = 0.01
             )
             {
-                name = so.label;
+                name = so.name;
                 targetStationName = so.targetStationName;
                 receiverStationName = so.receiverStationName;
                 records = GenerateSatelliteRecord(so.satelliteData, startDate, endDate, timeStep);
             }
-
-            public SatelliteSO ToSO()
-            {
-                return new SatelliteSO();
-            }
         }
 
-        public struct RecordGroup
+        public struct TimedPosition
         {
             public double elapsedTime;
             public FixedVector3 position;
@@ -70,7 +69,7 @@ namespace SatSys
         /// Generate orbit info in a given time span
         /// </summary>
         /// <param name="data"></param>
-        public static List<RecordGroup> GenerateSatelliteRecord(
+        public static List<TimedPosition> GenerateSatelliteRecord(
             SatelliteData data,
             double startDate,
             double endDate,
@@ -78,13 +77,11 @@ namespace SatSys
         )
         {
             var timeSpan = endDate - startDate;
-            var result = new List<RecordGroup>();
+            var result = new List<TimedPosition>();
             for (double t = 0; t < timeSpan; t += timeStep)
             {
                 data.UpdateAnomaly(t);
-                result.Add(
-                    new RecordGroup { elapsedTime = t, position = new FixedVector3(data.position), }
-                );
+                result.Add(new TimedPosition { elapsedTime = t, position = data.position, });
             }
             return result;
         }
@@ -93,28 +90,48 @@ namespace SatSys
         {
             public double startDate = SatDate.startJulianDate;
             public double endDate = SatDate.endJulianDate;
-            public double timeStep = 0.01;
+            public float timeStep = 0.01f;
             public List<Station> stations;
             public List<Satellite> satellites;
 
-            public SatTask()
+            public SatTask() { }
+
+            public SatTask(
+                List<Station> stations,
+                List<Satellite> satellites,
+                double startDate,
+                double endDate,
+                float timeStep = 0.01f
+            )
             {
-                stations = new List<Station>
+                this.stations = stations;
+                this.satellites = satellites;
+                this.startDate = startDate;
+                this.endDate = endDate;
+                this.timeStep = timeStep;
+            }
+
+            public static SatTask GetDefaultTask()
+            {
+                double startDate = SatDate.startJulianDate;
+                double endDate = SatDate.endJulianDate;
+                float timeStep = 0.01f;
+                var stations = new List<Station>
                 {
                     new Station
                     {
-                        name = "Station Beijing",
-                        longitude = 116.46,
-                        latitude = 39.92,
+                        name = "StationBeijing",
+                        longitude = 116.46f,
+                        latitude = 39.92f,
                     },
                     new Station
                     {
-                        name = "Station Antarctic",
-                        longitude = -62.21,
-                        latitude = -58.96,
+                        name = "StationAntarctic",
+                        longitude = -62.21f,
+                        latitude = -58.96f,
                     },
                 };
-                satellites = new List<Satellite>
+                var satellites = new List<Satellite>
                 {
                     new Satellite
                     {
@@ -134,8 +151,8 @@ namespace SatSys
                             startDate: startDate,
                             endDate: endDate
                         ),
-                        targetStationName = "Station Antarctic",
-                        receiverStationName = "Station Beijing",
+                        targetStationName = "StationAntarctic",
+                        receiverStationName = "StationBeijing",
                     },
                     new Satellite
                     {
@@ -157,21 +174,7 @@ namespace SatSys
                         ),
                     },
                 };
-            }
-
-            public SatTask(
-                List<Station> stations,
-                List<Satellite> satellites,
-                double startDate,
-                double endDate,
-                double timeStep = 0.01
-            )
-            {
-                this.stations = stations;
-                this.satellites = satellites;
-                this.startDate = startDate;
-                this.endDate = endDate;
-                this.timeStep = timeStep;
+                return new SatTask(stations, satellites, startDate, endDate, timeStep);
             }
         }
     }

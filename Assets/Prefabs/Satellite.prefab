@@ -220,27 +220,34 @@ MonoBehaviour:
     attractorMass: 5.972099959139834e+24
     gravConst: 0.00000000006674300001563438
     elements:
-      SemiMajorAxis: 0.0025
-      Eccentricity: 0.045
-      Inclination: 5.2522
-      Periapsis: 130.6531
-      AscendingNode: 88.9708
-      MeanAnomaly: 328.5176
-    currentMeanAnomaly: 0
-    orbitTimeStep: 0.001
+      SemiMajorAxis: 27977.6
+      Eccentricity: 0.162
+      Inclination: 49.85
+      Periapsis: 56.198
+      AscendingNode: 52.521
+      MeanAnomaly: 316.069
+    currentMeanAnomaly: 316.069
     orbitMaxMeanAnomaly: 10
+    orbitTimeStep: 0.001
+    orbitPeriod: 0
     <position>k__BackingField:
-      x: 0
-      y: 0
-      z: 0
+      x: -18904.480324427044
+      y: -1218.5772757061404
+      z: 16905.139335372194
     <velocity>k__BackingField:
-      x: 0
-      y: 0
-      z: 0
-  updateViewInterval: 0.3
+      x: -0.15558209280914162
+      y: -0.3654561370984975
+      z: -0.11724332425113161
+  obstacleCollider: {fileID: 0}
   elevation: 10
+  maxVisibleDistance: 10
   visibleSatellites: []
   visibleStations: []
+  targetStationName: 
+  receiverStationName: 
+  targetStation: {fileID: 0}
+  receiverStation: {fileID: 0}
+  linkRoute: []
 --- !u!135 &685396624037172967
 SphereCollider:
   m_ObjectHideFlags: 0

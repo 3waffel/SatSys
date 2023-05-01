@@ -63,21 +63,21 @@ public class MenuButtonSO : ScriptableObject
             case (EventType.Orbits):
                 action += () =>
                 {
-                    var orbitsHolder = LineManager.LM.orbits.gameObject;
+                    var orbitsHolder = LineManager.Instance.orbits.gameObject;
                     orbitsHolder.SetActive(!orbitsHolder.activeSelf);
                 };
                 break;
             case (EventType.Links):
                 action += () =>
                 {
-                    var linksHolder = LineManager.LM.links.gameObject;
+                    var linksHolder = LineManager.Instance.links.gameObject;
                     linksHolder.SetActive(!linksHolder.activeSelf);
                 };
                 break;
             case (EventType.Routes):
                 action += () =>
                 {
-                    var routesHolder = LineManager.LM.routes.gameObject;
+                    var routesHolder = LineManager.Instance.routes.gameObject;
                     routesHolder.SetActive(!routesHolder.activeSelf);
                 };
                 break;

@@ -8,11 +8,13 @@ using UnityEngine.Events;
 public class SatelliteLogic : ObjectLogic
 {
     public SatData.SatelliteData satelliteData;
+    public List<SatRecord.TimedPosition> orbitRecord;
 
     /// <summary>
     /// interval to update `nextPosition`,
     /// should be updated when `timeScale` changes
     /// </summary>
+    [SerializeField]
     private float updatePositionInterval = 1e-5f / Timeline.timeStep;
 
     /// <summary>
@@ -21,14 +23,15 @@ public class SatelliteLogic : ObjectLogic
     /// </summary>
     private float lerpCount = 0f;
 
+    private int recordIndex = 0;
+
     /// <summary>
     /// next position the satellite will lerp to,
     /// updated by `updatePositionAction`
     /// </summary>
     private Vector3 nextPosition;
 
-    UnityAction updatePositionAction;
-    UnityAction updateViewAction;
+    UnityAction updateAction;
 
     /// <summary>
     /// collider of the central body, defined by `targetPlanet`
@@ -52,27 +55,31 @@ public class SatelliteLogic : ObjectLogic
     public StationLogic receiverStation;
     public List<ObjectLogic> linkRoute;
 
-    void Awake()
-    {
-        if (satelliteData == null)
-        {
-            satelliteData = new SatData.SatelliteData();
-        }
-        satelliteData.UpdateInternalState();
-    }
-
     protected override void Start()
     {
         base.Start();
 
-        transform.position = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
-        targetStation = targetPlanet.Find(targetStationName).GetComponent<StationLogic>();
-        receiverStation = targetPlanet.Find(receiverStationName).GetComponent<StationLogic>();
+        // TODO
+        if (updateAction == null)
+        {
+            if (satelliteData != null)
+            {
+                InitializeDirectMovement();
+            }
+            else if (orbitRecord != null)
+            {
+                InitializeRecordMovement();
+            }
+        }
 
-        EventManager.TimeChanged += (time) => satelliteData.UpdateAnomaly(time);
-        EventManager.TimeStepChanged += (timeStep) => updatePositionInterval = 1e-5f / timeStep;
-
-        InitializeDirectMovement();
+        if (
+            targetStationName != null
+            && receiverStationName != null
+            && targetStationName != receiverStationName
+        )
+        {
+            updateAction += () => UpdateLinkRoute();
+        }
 
         if (obstacleCollider == null)
         {
@@ -82,19 +89,20 @@ public class SatelliteLogic : ObjectLogic
 
     void Update()
     {
-        updateViewAction?.Invoke();
-        UpdateLinkRoute();
+        updateAction?.Invoke();
     }
 
     /// <summary>
     /// initialize movement based on direct calculation of orbital elements,
     /// `nextPosition` is provided by
     /// </summary>
-    void InitializeDirectMovement()
+    public void InitializeDirectMovement()
     {
-        updatePositionAction = () =>
-            nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
-        updateViewAction = () =>
+        transform.position = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
+        EventManager.TimeChanged += (time) => satelliteData.UpdateAnomaly(time);
+        EventManager.TimeStepChanged += (timeStep) => updatePositionInterval = 1e-5f / timeStep;
+
+        updateAction = () =>
         {
             if (lerpCount < 1.0f)
             {
@@ -103,7 +111,41 @@ public class SatelliteLogic : ObjectLogic
             else
             {
                 lerpCount = 0;
-                updatePositionAction?.Invoke();
+                nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
+            }
+            transform.position = Vector3.Lerp(
+                transform.position,
+                targetPlanet.position + nextPosition,
+                lerpCount
+            );
+        };
+    }
+
+    /// <summary>
+    /// movement based on discrete data, provided by `SatTask`
+    /// </summary>
+    public void InitializeRecordMovement()
+    {
+        transform.position = (Vector3)orbitRecord[0].position * SatUtils.Scale;
+        float step = (float)(orbitRecord[1].elapsedTime - orbitRecord[0].elapsedTime);
+        EventManager.TimeChanged += (time) =>
+        {
+            int idx = (int)(time / step);
+            idx = orbitRecord.FindIndex(idx, (item) => item.elapsedTime >= time);
+            recordIndex = idx < 0 ? orbitRecord.Count - 1 : idx;
+        };
+        EventManager.TimeStepChanged += (timeStep) => updatePositionInterval = step / timeStep;
+
+        updateAction = () =>
+        {
+            if (lerpCount < 1.0f)
+            {
+                lerpCount += Time.deltaTime / updatePositionInterval;
+            }
+            else
+            {
+                lerpCount = 0;
+                nextPosition = (Vector3)orbitRecord[recordIndex].position * SatUtils.Scale;
             }
             transform.position = Vector3.Lerp(
                 transform.position,
@@ -116,8 +158,20 @@ public class SatelliteLogic : ObjectLogic
     // TODO movement based on rotation and ecllipse shape
     void InitializeEllipseMovement()
     {
-        updatePositionAction = () => { };
-        updateViewAction = () => { };
+        updateAction = () => { };
+    }
+
+    public List<Vector3> GetScaledOrbit()
+    {
+        if (satelliteData != null)
+        {
+            return satelliteData.GetScaledOrbit();
+        }
+        else if (orbitRecord != null)
+        {
+            return null;
+        }
+        return null;
     }
 
     // TODO judging from elevation, distance and obstacle's collider
@@ -217,11 +271,13 @@ public class SatelliteLogic : ObjectLogic
     /// update `linkRoute` every frame,
     /// targetStation -> currentSatellite -> relaySatellites -> destStation
     /// </summary>
-    /// <param name="relay">numbder of relay satellites</param>
+    /// <param name="relay">max numbder of relay satellites</param>
     public void UpdateLinkRoute(int relay = 1)
     {
         if (targetStation == null || receiverStation == null || targetStation == receiverStation)
         {
+            targetStation = targetPlanet.Find(targetStationName)?.GetComponent<StationLogic>();
+            receiverStation = targetPlanet.Find(receiverStationName)?.GetComponent<StationLogic>();
             linkRoute = null;
             return;
         }

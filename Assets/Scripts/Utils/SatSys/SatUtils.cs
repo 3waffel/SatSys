@@ -23,9 +23,12 @@ namespace SatSys
         /// Standard Gravitational Parameter (km^3 * s^-2)
         /// </summary>
         // public static double mu => GravConst * 10e-12 * MassOfEarth;
-        public static double StdGravParam = 398600;
+        public const double StdGravParam = 398600;
 
-        public const double EarthRadius = 6757; // km
+        /// <summary>
+        /// (km)
+        /// </summary>
+        public const double EarthRadius = 6757;
 
         public static float Scale = (float)(0.5 / EarthRadius);
 
@@ -43,19 +46,21 @@ namespace SatSys
             public double y;
             public double z;
 
-            public FixedDouble3(double3 vector)
-            {
-                x = vector.x;
-                y = vector.y;
-                z = vector.z;
-            }
+            public static implicit operator FixedDouble3(double3 vector) =>
+                new FixedDouble3
+                {
+                    x = vector.x,
+                    y = vector.y,
+                    z = vector.z
+                };
 
-            public FixedDouble3(Vector3 vector)
-            {
-                x = vector.x;
-                y = vector.y;
-                z = vector.z;
-            }
+            public static implicit operator FixedDouble3(Vector3 vector) =>
+                new FixedDouble3
+                {
+                    x = vector.x,
+                    y = vector.y,
+                    z = vector.z
+                };
         }
 
         public struct FixedVector3
@@ -64,19 +69,24 @@ namespace SatSys
             public float y;
             public float z;
 
-            public FixedVector3(Vector3 vector)
-            {
-                x = vector.x;
-                y = vector.y;
-                z = vector.z;
-            }
+            public static implicit operator FixedVector3(Vector3 vector) =>
+                new FixedVector3
+                {
+                    x = vector.x,
+                    y = vector.y,
+                    z = vector.z
+                };
 
-            public FixedVector3(double3 vector)
-            {
-                x = (float)vector.x;
-                y = (float)vector.y;
-                z = (float)vector.z;
-            }
+            public static implicit operator FixedVector3(double3 vector) =>
+                new FixedVector3
+                {
+                    x = (float)vector.x,
+                    y = (float)vector.y,
+                    z = (float)vector.z
+                };
+
+            public static implicit operator Vector3(FixedVector3 vector) =>
+                new Vector3(vector.x, vector.y, vector.z);
         }
     }
 }

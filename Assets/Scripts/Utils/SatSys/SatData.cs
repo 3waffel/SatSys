@@ -20,12 +20,17 @@ namespace SatSys
             public KeplerianElements elements;
             public double currentMeanAnomaly;
 
-            // degrees per second
-            public double meanMotion =>
+            /// <summary>
+            /// (degrees per second)
+            /// </summary>
+            /// <returns></returns>
+            public double meanMotionPerSecond =>
                 Math.Sqrt(mu / Math.Pow(elements.SemiMajorAxis, 3)) * (180 / Math.PI);
 
-            public double orbitTimeStep = 0.001;
+            // TODO fix mean motion
             public double orbitMaxMeanAnomaly = 10;
+            public double orbitTimeStep = 0.001;
+            public double orbitPeriod;
 
             [field: SerializeField]
             public double3 position { get; private set; }
@@ -36,20 +41,7 @@ namespace SatSys
             public SatelliteData(KeplerianElements elements)
             {
                 this.elements = elements;
-            }
-
-            public SatelliteData()
-            {
-                this.elements = new KeplerianElements
-                {
-                    // Parameters of GSAT0201
-                    SemiMajorAxis = 27977.6, // (km)
-                    Eccentricity = 0.162,
-                    Inclination = 49.850,
-                    Periapsis = 56.198,
-                    AscendingNode = 52.521,
-                    MeanAnomaly = 316.069,
-                };
+                UpdateAnomaly(0);
             }
 
             public void UpdateInternalState()
@@ -57,23 +49,31 @@ namespace SatSys
                 (position, velocity) = Kep2Cart(elements, mu, currentMeanAnomaly);
             }
 
-            // Update current mean anomaly based on elapsed time in seconds
+            /// <summary>
+            /// update current mean anomaly based on elapsed time in seconds
+            /// </summary>
+            /// <param name="time"></param>
             public void UpdateAnomaly(double time)
             {
                 var elapsedTimeInSeconds = SatDate.GetSeconds(time);
                 currentMeanAnomaly =
-                    (elements.MeanAnomaly + elapsedTimeInSeconds * meanMotion) % 360;
+                    (elements.MeanAnomaly + elapsedTimeInSeconds * meanMotionPerSecond) % 360;
 
                 UpdateInternalState();
             }
 
+            /// <summary>
+            /// get a list of positions,
+            /// used to draw orbit line
+            /// </summary>
+            /// <returns></returns>
             public List<Vector3> GetScaledOrbit()
             {
                 var positions = new List<Vector3>();
                 for (
                     double ma = 0;
                     ma <= orbitMaxMeanAnomaly;
-                    ma += SatDate.GetSeconds(orbitTimeStep) * meanMotion
+                    ma += SatDate.GetSeconds(orbitTimeStep) * meanMotionPerSecond
                 )
                 {
                     var (position, _) = Kep2Cart(elements, mu, ma);
@@ -93,8 +93,6 @@ namespace SatSys
             public double height;
 
             public List<SatelliteData> satellites;
-
-            public WalkerConstellation() { }
         }
     }
 }

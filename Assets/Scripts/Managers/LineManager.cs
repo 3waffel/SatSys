@@ -7,9 +7,11 @@ using QuikGraph;
 using System;
 using System.Linq;
 
+[DisallowMultipleComponent]
 public class LineManager : MonoBehaviour
 {
-    public Material lineMaterial;
+    public Material lineDefaultMaterial;
+    public Material lineFlowMaterial;
 
     public Color orbitColor = Color.cyan;
     public Color satLinkColor = Color.yellow;
@@ -25,13 +27,26 @@ public class LineManager : MonoBehaviour
     private AdjacencyGraph<SatelliteLogic, Edge<SatelliteLogic>> satGraph =
         new AdjacencyGraph<SatelliteLogic, Edge<SatelliteLogic>>();
 
-    public static LineManager LM => FindObjectOfType<LineManager>();
+    public static LineManager Instance;
 
     void Awake()
     {
-        if (lineMaterial == null)
+        if (Instance == null)
         {
-            lineMaterial = new Material(Shader.Find("Unlit/Color"));
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        if (lineDefaultMaterial == null)
+        {
+            lineDefaultMaterial = new Material(Shader.Find("UI/Default"));
+        }
+        if (lineFlowMaterial == null)
+        {
+            lineFlowMaterial = lineDefaultMaterial;
         }
 
         if (orbits == null)
@@ -129,7 +144,14 @@ public class LineManager : MonoBehaviour
         {
             foreach (var logic in logics)
             {
-                CreateOrbitFromData(logic.satelliteData, orbits);
+                if (logic.orbitRecord != null)
+                {
+                    CreateOrbitFromRecord(logic.orbitRecord, orbits);
+                }
+                else
+                {
+                    CreateOrbitFromData(logic.satelliteData, orbits);
+                }
             }
         }
     }
@@ -142,7 +164,30 @@ public class LineManager : MonoBehaviour
     public void CreateOrbitFromData(SatelliteData data, Transform parent)
     {
         var positions = data.GetScaledOrbit();
-        CreateLine(positions.ToArray(), parent, lineMaterial, orbitColor, orbitColor);
+        CreateLine(positions.ToArray(), parent, lineDefaultMaterial, orbitColor, orbitColor);
+    }
+
+    public void CreateOrbitFromRecord(List<SatRecord.TimedPosition> orbitRecord, Transform parent)
+    {
+        var positions = new List<Vector3>();
+        int halfIndex = 1;
+        void semiCircle(ref int idx)
+        {
+            float maxAngle = 0;
+            int originIdx = idx;
+            for (; idx < orbitRecord.Count; idx++)
+            {
+                var a = Vector3.Angle(orbitRecord[originIdx].position, orbitRecord[idx].position);
+                if (a < maxAngle)
+                    break;
+                maxAngle = a;
+                positions.Add((Vector3)orbitRecord[idx].position * SatUtils.Scale);
+            }
+        }
+        semiCircle(ref halfIndex);
+        semiCircle(ref halfIndex);
+
+        CreateLine(positions.ToArray(), parent, lineDefaultMaterial, orbitColor, orbitColor);
     }
 
     /// <summary>
@@ -221,7 +266,7 @@ public class LineManager : MonoBehaviour
 
             var from = edge.Source.transform.position;
             var to = edge.Target.transform.position;
-            CreateSimpleLine(from, to, links, lineMaterial, satLinkColor);
+            CreateSimpleLine(from, to, links, lineDefaultMaterial, satLinkColor);
         }
     }
 
@@ -246,7 +291,7 @@ public class LineManager : MonoBehaviour
                 CreateLine(
                     points.ToArray(),
                     routes,
-                    lineMaterial,
+                    lineFlowMaterial,
                     Color.cyan,
                     Color.blue,
                     0.02f,

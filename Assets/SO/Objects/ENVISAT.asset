@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc03ddac993c8ef40859046a8c4039bc, type: 3}
   m_Name: ENVISAT
   m_EditorClassIdentifier: 
-  label: ENVISAT
   itemPrefab: {fileID: 959510204313232932, guid: 813f897af510f9c4d91ec56cbc627e94, type: 3}
   satelliteData:
     attractorMass: 5.972099959139834e+24
@@ -25,8 +24,8 @@ MonoBehaviour:
       AscendingNode: 161.5
       MeanAnomaly: 263.19
     currentMeanAnomaly: 89.34259041404619
-    orbitTimeStep: 0.0001
     orbitMaxMeanAnomaly: 10
+    orbitTimeStep: 0.0001
     <position>k__BackingField:
       x: -801.849932628518
       y: 2838.2070110140903
@@ -35,5 +34,5 @@ MonoBehaviour:
       x: 0.6329800020003847
       y: -0.17551768549761168
       z: 0.11918134969227388
-  targetStationName: Station LA
-  receiverStationName: Station Beijing
+  targetStationName: StationLA
+  receiverStationName: StationBeijing
