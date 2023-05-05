@@ -23,7 +23,7 @@ public class SatelliteLogic : ObjectLogic
     /// </summary>
     private float lerpCount = 0f;
 
-    private int recordIndex = 0;
+    public int recordIndex = 0;
 
     /// <summary>
     /// next position the satellite will lerp to,

@@ -9,12 +9,15 @@ public static class EventManager
 {
     // Main Logic Events
     public static UnityAction<ObjectSO> ObjectCreated;
+    public static UnityAction ObjectDeleted;
     public static UnityAction ObjectUpdated;
     public static UnityAction<double> TimeChanged;
     public static UnityAction<double, double> TimeRangeChanged;
     public static UnityAction<float> TimeStepChanged;
 
     public static void OnObjectCreated(ObjectSO so) => ObjectCreated?.Invoke(so);
+
+    public static void OnObjectDeleted() => ObjectDeleted?.Invoke();
 
     public static void OnObjectUpdated() => ObjectUpdated?.Invoke();
 

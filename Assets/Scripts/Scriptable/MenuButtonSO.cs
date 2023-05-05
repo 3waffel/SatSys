@@ -26,6 +26,12 @@ public class MenuButtonSO : ScriptableObject
         Orbits,
         Links,
         Routes,
+
+        // delect selected
+        Delete,
+
+        // modify selected
+        Modify,
     }
 
     public EventType type;
@@ -57,9 +63,6 @@ public class MenuButtonSO : ScriptableObject
             case (EventType.Save):
                 action += FileManager.SaveTask;
                 break;
-            case (EventType.Create):
-                action += () => Debug.Log("Create Button Clicked");
-                break;
             case (EventType.Orbits):
                 action += () =>
                 {
@@ -80,6 +83,15 @@ public class MenuButtonSO : ScriptableObject
                     var routesHolder = LineManager.Instance.routes.gameObject;
                     routesHolder.SetActive(!routesHolder.activeSelf);
                 };
+                break;
+            case (EventType.Create):
+                action += () => { };
+                break;
+            case (EventType.Delete):
+                action += () => { };
+                break;
+            case (EventType.Modify):
+                action += () => { };
                 break;
         }
     }

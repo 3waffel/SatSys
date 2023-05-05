@@ -24,6 +24,6 @@ public class MenuButtonLogic : MonoBehaviour
     public void OnMenuToggled(bool flag)
     {
         _submenuContainer.gameObject.SetActive(flag);
-        transform.parent.SetAsLastSibling();
+        // transform.parent.SetAsLastSibling();
     }
 }

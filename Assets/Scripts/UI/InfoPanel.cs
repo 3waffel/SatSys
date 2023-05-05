@@ -27,16 +27,27 @@ public class InfoPanel : MonoBehaviour
         switch (logic)
         {
             case SatelliteLogic satellite:
-                var data = satellite.satelliteData;
-                string pos =
-                    $"x: {data.position.x}\n\t\ty: {data.position.y}\n\t\tz: {data.position.z}";
-                string vel =
-                    $"x: {data.velocity.x}\n\t\ty: {data.velocity.y}\n\t\tz: {data.velocity.z}";
                 CreateLabel("Name:\t", satellite.name);
-                CreateLabel("Position:\t", pos);
-                CreateLabel("Velocity:\t", vel);
-                CreateLabel("Target:\t", satellite.targetStation?.name);
-                CreateLabel("Receiver:\t", satellite.receiverStation?.name);
+                CreateLabel("Target:\t", satellite.targetStation?.name ?? "Null");
+                CreateLabel("Receiver:\t", satellite.receiverStation?.name ?? "Null");
+                if (satellite.orbitRecord == null)
+                {
+                    var data = satellite.satelliteData;
+                    string pos =
+                        $"x: {data.position.x}\n\t\ty: {data.position.y}\n\t\tz: {data.position.z}";
+                    string vel =
+                        $"x: {data.velocity.x}\n\t\ty: {data.velocity.y}\n\t\tz: {data.velocity.z}";
+                    CreateLabel("Position:\t", pos);
+                    CreateLabel("Velocity:\t", vel);
+                }
+                else
+                {
+                    var record = satellite.orbitRecord;
+                    var data = record[satellite.recordIndex];
+                    string pos =
+                        $"x: {data.position.x}\n\t\ty: {data.position.y}\n\t\tz: {data.position.z}";
+                    CreateLabel("Position:\t", pos);
+                }
                 break;
             case StationLogic station:
                 CreateLabel("Name:\t", station.name);
