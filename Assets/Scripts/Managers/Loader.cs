@@ -9,6 +9,7 @@ public class Loader : MonoBehaviour
 
     public Transform objectLabelCanvas;
     public Transform infoLabelTemplate;
+    public Transform dialogCanvas;
 
     void Awake()
     {

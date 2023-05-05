@@ -24,6 +24,14 @@ public class ObjectLogic : MonoBehaviour
     {
         EventManager.BrowserItemToggled += SwitchActive;
         EventManager.BrowserItemSelected += OnItemSelected;
+        EventManager.ObjectDeleted += () =>
+        {
+            if (EventManager.SelectedGuid == _guid)
+            {
+                uiLabelCanvas.gameObject.SetActive(false);
+                GameObject.Destroy(gameObject);
+            }
+        };
 
         if (uiLabelCanvas == null)
         {
@@ -36,6 +44,7 @@ public class ObjectLogic : MonoBehaviour
     {
         if (_guid == guid)
         {
+            uiLabelCanvas.gameObject.SetActive(false);
             this.gameObject.SetActive(flag);
             EventManager.OnObjectUpdated();
         }

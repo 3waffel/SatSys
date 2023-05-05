@@ -5,6 +5,10 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
 using static EventManager;
+using static SatSys.SatData;
+using static SatSys.SatElements;
+using SatSys;
+using UI.Dialogs;
 
 [CreateAssetMenu(fileName = "MenuButtonSO", menuName = "GeoSys/MenuButtonSO")]
 public class MenuButtonSO : ScriptableObject
@@ -85,14 +89,113 @@ public class MenuButtonSO : ScriptableObject
                 };
                 break;
             case (EventType.Create):
-                action += () => { };
+                var holder = Loader.Instance.dialogCanvas;
+                var satDialog = holder.Find("SatelliteInputDialog").GetComponent<uDialog>();
+                var sttDialog = holder.Find("StationInputDialog").GetComponent<uDialog>();
+                satDialog.Buttons[0].OnClick = () =>
+                {
+                    var input = satDialog.GetComponentInChildren<InputArea>();
+                    var values = input.GetInputValues();
+                    var satSO = ScriptableObject.CreateInstance<SatelliteSO>();
+                    if (
+                        double.TryParse(values[0], out double res0)
+                        && double.TryParse(values[1], out double res1)
+                        && double.TryParse(values[2], out double res2)
+                        && double.TryParse(values[3], out double res3)
+                        && double.TryParse(values[4], out double res4)
+                        && double.TryParse(values[5], out double res5)
+                        && res0 > SatUtils.EarthRadius
+                    )
+                    {
+                        satSO.satelliteData = new SatelliteData(
+                            new KeplerianElements
+                            {
+                                SemiMajorAxis = res0,
+                                Eccentricity = res1,
+                                Inclination = res2,
+                                Periapsis = res3,
+                                AscendingNode = res4,
+                                MeanAnomaly = res5,
+                            }
+                        );
+                        satSO.name = values[6] ?? "New Satellite";
+                        satSO.targetStationName = values[7] ?? "Null";
+                        satSO.receiverStationName = values[8] ?? "Null";
+                        EventManager.OnObjectCreated(satSO);
+                    }
+                    else
+                    {
+                        CreateSimpleDialog()
+                            .SetTitleText("Warning")
+                            .SetContentText("Invalid Input")
+                            .AddButton("Confirm", () => { });
+                    }
+                };
+                sttDialog.Buttons[0].OnClick = () =>
+                {
+                    var input = sttDialog.GetComponentInChildren<InputArea>();
+                    var values = input.GetInputValues();
+                    var sttSO = ScriptableObject.CreateInstance<StationSO>();
+                    if (
+                        float.TryParse(values[0], out float res0)
+                        && float.TryParse(values[1], out float res1)
+                    )
+                    {
+                        sttSO.longitude = res0;
+                        sttSO.latitude = res1;
+                        sttSO.name = values[2] ?? "New Station";
+                        EventManager.OnObjectCreated(sttSO);
+                    }
+                    else
+                    {
+                        CreateSimpleDialog()
+                            .SetTitleText("Warning")
+                            .SetContentText("Invalid Input")
+                            .AddButton("Confirm", () => { });
+                    }
+                };
+                action = () =>
+                {
+                    CreateSimpleDialog()
+                        .SetTitleText("Notice")
+                        .SetContentText("Please select type of the creation.")
+                        .AddButton("Satellite", () => satDialog.Show())
+                        .AddButton("Station", () => sttDialog.Show())
+                        .AddButton("Cancel", () => { });
+                };
                 break;
             case (EventType.Delete):
-                action += () => { };
+                action = () =>
+                {
+                    CreateSimpleDialog()
+                        .SetTitleText("Notice")
+                        .SetContentText("Are you sure to delete the object?")
+                        .AddButton("Confirm", () => EventManager.OnObjectDeleted())
+                        .AddButton("Cancel", () => { });
+                };
                 break;
             case (EventType.Modify):
-                action += () => { };
+                action = () =>
+                {
+                    CreateSimpleDialog()
+                        .SetTitleText("Notice")
+                        .SetContentText("Please delete then create the object")
+                        // .AddButton("Confirm", () => EventManager.OnObjectDeleted())
+                        .AddButton("Cancel", () => { });
+                };
                 break;
         }
+    }
+
+    uDialog CreateSimpleDialog()
+    {
+        return uDialog
+            .NewDialog(Loader.Instance.dialogCanvas.GetComponent<RectTransform>())
+            .SetModal(true)
+            .SetDestroyAfterClose(true)
+            .SetShowTitleCloseButton(false)
+            .SetCloseWhenAnyButtonClicked(true)
+            .SetShowAnimation(eShowAnimation.FadeIn)
+            .SetCloseAnimation(eCloseAnimation.FadeOut);
     }
 }

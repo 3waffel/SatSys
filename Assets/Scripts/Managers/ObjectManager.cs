@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Threading.Tasks;
 using static SatSys.SatData;
 using static SatSys.SatRecord;
 
@@ -41,6 +42,7 @@ public class ObjectManager : MonoBehaviour
     void Start()
     {
         EventManager.ObjectCreated += OnObjectCreated;
+        EventManager.ObjectDeleted += OnObjectDeleted;
 
         SpawnFromCollection();
     }
@@ -102,6 +104,23 @@ public class ObjectManager : MonoBehaviour
         Guid guid = Guid.NewGuid();
         CreateBrowserObject(guid, so.name);
         CreateInspectorObject(guid, so);
+        objectCollection.Add(so);
+        EventManager.OnObjectUpdated();
+    }
+
+    // using task to avoid finding destroyed objects
+    // TODO update collection when deleted
+    async void OnObjectDeleted()
+    {
+        await Task.Run(() => new WaitForSeconds(0.1f))
+            .ContinueWith(
+                (_) =>
+                {
+                    EventManager.OnObjectUpdated();
+                    EventManager.SelectedGuid = default;
+                },
+                TaskScheduler.FromCurrentSynchronizationContext()
+            );
     }
 
     void CreateSatelliteFromData(SatelliteData data, string label)

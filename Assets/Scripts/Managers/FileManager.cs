@@ -33,9 +33,8 @@ public class FileManager : MonoBehaviour
     public static void SaveTask()
     {
         var task =
-            ObjectManager.Instance.SaveCollection()
-            ?? ObjectManager.Instance.SaveScene()
-            ?? new SatTask();
+            // ObjectManager.Instance.SaveCollection() ??
+            ObjectManager.Instance.SaveScene() ?? new SatTask();
 
         StandaloneFileBrowser.SaveFilePanelAsync(
             "Save File",

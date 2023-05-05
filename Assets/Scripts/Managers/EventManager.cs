@@ -33,8 +33,10 @@ public static class EventManager
     public static void OnTimeStepChange(float timeScale) => TimeStepChanged?.Invoke(timeScale);
 
     // UI Browser Events
+    public static Guid SelectedGuid;
     public static UnityAction<Guid, bool> BrowserItemToggled;
     public static UnityAction<Guid> BrowserItemSelected;
+    public static UnityAction<Guid> BrowserItemDeselected;
     public static UnityAction<ObjectLogic> ObjectInfoSent;
 
     public static void OnBrowserItemToggled(Guid guid, bool flag) =>
@@ -44,6 +46,11 @@ public static class EventManager
     /// trigger when the browser item is selected
     /// </summary>
     public static void OnBrowserItemSelected(Guid id) => BrowserItemSelected?.Invoke(id);
+
+    /// <summary>
+    /// trigger when the browser item is deselected
+    /// </summary>
+    public static void OnBrowserItemDeselected(Guid id) => BrowserItemDeselected?.Invoke(id);
 
     /// <summary>
     /// Send info from the scene object to the display window

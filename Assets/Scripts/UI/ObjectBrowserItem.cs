@@ -17,16 +17,21 @@ public class ObjectBrowserItem : MonoBehaviour, ISelectHandler
 
     public void OnSelect(BaseEventData eventData)
     {
+        EventManager.SelectedGuid = _guid;
         EventManager.OnBrowserItemSelected(_guid);
     }
 
     void Start()
     {
         GetComponentInChildren<Toggle>().onValueChanged.AddListener(
-            delegate(bool flag)
-            {
-                EventManager.OnBrowserItemToggled(_guid, flag);
-            }
+            (flag) => EventManager.OnBrowserItemToggled(_guid, flag)
         );
+        EventManager.ObjectDeleted += () =>
+        {
+            if (EventManager.SelectedGuid == _guid)
+            {
+                GameObject.Destroy(gameObject);
+            }
+        };
     }
 }
