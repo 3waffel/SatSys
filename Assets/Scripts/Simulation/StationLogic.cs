@@ -39,7 +39,7 @@ public class StationLogic : ObjectLogic
 
         if (obstacleCollider == null)
         {
-            obstacleCollider = targetPlanet.Find("Sphere").GetComponent<SphereCollider>();
+            obstacleCollider = targetPlanet.GetComponentInChildren<SphereCollider>();
         }
     }
 
@@ -56,7 +56,7 @@ public class StationLogic : ObjectLogic
     private void InitializePosition()
     {
         var planetRadius = targetPlanet.gameObject.GetComponent<PlanetLogic>().SphereRadius;
-        transform.localPosition = new Vector3(altitude * SatUtils.Scale + planetRadius, 0, 0);
+        transform.localPosition = new Vector3(altitude * SatUtils.EarthScale + planetRadius, 0, 0);
         transform.RotateAround(Vector3.zero, Vector3.up, -longitude);
         transform.RotateAround(Vector3.zero, transform.forward, latitude);
     }

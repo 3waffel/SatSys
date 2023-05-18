@@ -83,7 +83,7 @@ public class SatelliteLogic : ObjectLogic
 
         if (obstacleCollider == null)
         {
-            obstacleCollider = targetPlanet.Find("Sphere").GetComponent<SphereCollider>();
+            obstacleCollider = targetPlanet.GetComponentInChildren<SphereCollider>();
         }
     }
 
@@ -98,7 +98,7 @@ public class SatelliteLogic : ObjectLogic
     /// </summary>
     public void InitializeDirectMovement()
     {
-        transform.position = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
+        transform.position = SatUtils.Vector3(satelliteData.position * SatUtils.EarthScale);
         EventManager.TimeChanged += (time) => satelliteData.UpdateAnomaly(time);
         EventManager.TimeStepChanged += (timeStep) => updatePositionInterval = 1e-5f / timeStep;
 
@@ -111,7 +111,7 @@ public class SatelliteLogic : ObjectLogic
             else
             {
                 lerpCount = 0;
-                nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.Scale);
+                nextPosition = SatUtils.Vector3(satelliteData.position * SatUtils.EarthScale);
             }
             transform.position = Vector3.Lerp(
                 transform.position,
@@ -126,7 +126,7 @@ public class SatelliteLogic : ObjectLogic
     /// </summary>
     public void InitializeRecordMovement()
     {
-        transform.position = (Vector3)orbitRecord[0].position * SatUtils.Scale;
+        transform.position = (Vector3)orbitRecord[0].position * SatUtils.EarthScale;
         float step = (float)(orbitRecord[1].elapsedTime - orbitRecord[0].elapsedTime);
         EventManager.TimeChanged += (time) =>
         {
@@ -145,7 +145,7 @@ public class SatelliteLogic : ObjectLogic
             else
             {
                 lerpCount = 0;
-                nextPosition = (Vector3)orbitRecord[recordIndex].position * SatUtils.Scale;
+                nextPosition = (Vector3)orbitRecord[recordIndex].position * SatUtils.EarthScale;
             }
             transform.position = Vector3.Lerp(
                 transform.position,

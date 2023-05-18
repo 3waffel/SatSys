@@ -16,14 +16,13 @@ public class PlanetLogic : MonoBehaviour
 
     public float SphereRadius
     {
-        get =>
-            sphere.GetComponent<SphereCollider>().radius
-            * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
+        get => sphere.GetComponent<MeshFilter>().mesh.bounds.extents.x; // 0.5
     }
 
     void Start()
     {
         InitializeRotation();
+        SatSys.SatUtils.EarthScale = SphereRadius / SatSys.SatUtils.EarthRadius;
         EventManager.TimeChanged += UpdateEarthRotation;
     }
 

@@ -28,9 +28,11 @@ namespace SatSys
         /// <summary>
         /// (km)
         /// </summary>
-        public const double EarthRadius = 6757;
+        public const float EarthRadius = 6757;
 
-        public static float Scale = (float)(0.5 / EarthRadius);
+        public static float EarthScale = (float)(0.5 / EarthRadius);
+        // public static float EarthScale =>
+        //     MonoBehaviour.FindObjectOfType<PlanetLogic>().SphereRadius / EarthRadius;
 
         public const double AU = 1.495978707e11;
 

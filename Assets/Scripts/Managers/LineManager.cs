@@ -181,7 +181,7 @@ public class LineManager : MonoBehaviour
                 if (a < maxAngle)
                     break;
                 maxAngle = a;
-                positions.Add((Vector3)orbitRecord[idx].position * SatUtils.Scale);
+                positions.Add((Vector3)orbitRecord[idx].position * SatUtils.EarthScale);
             }
         }
         semiCircle(ref halfIndex);

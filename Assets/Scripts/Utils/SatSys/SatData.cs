@@ -77,7 +77,7 @@ namespace SatSys
                 )
                 {
                     var (position, _) = Kep2Cart(elements, mu, ma);
-                    positions.Add(Vector3(position * Scale));
+                    positions.Add(Vector3(position * EarthScale));
                 }
                 return positions;
             }

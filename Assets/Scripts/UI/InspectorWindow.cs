@@ -78,6 +78,7 @@ public class InspectorWindow
         else if (Cursor.lockState != CursorLockMode.None)
         {
             Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }
