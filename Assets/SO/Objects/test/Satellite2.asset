@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc03ddac993c8ef40859046a8c4039bc, type: 3}
+  m_Name: Satellite2
+  m_EditorClassIdentifier: 
+  label: GSAT0104
+  itemPrefab: {fileID: 959510204313232932, guid: 813f897af510f9c4d91ec56cbc627e94, type: 3}
+  satelliteData:
+    attractorMass: 5.972099959139834e+24
+    gravConst: 0.00000000006674300001563438
+    elements:
+      SemiMajorAxis: 29599.8
+      Eccentricity: 0
+      Inclination: 56
+      Periapsis: 0
+      AscendingNode: 197.632
+      MeanAnomaly: 7.653
+    currentMeanAnomaly: 90.09901567519091
+    orbitTimeStep: 0.001
+    orbitMaxMeanAnomaly: 10
+    <position>k__BackingField:
+      x: 19309.05316993367
+      y: -8544.450228608692
+      z: 20743.69774200114
+    <velocity>k__BackingField:
+      x: 0.26242230177189024
+      y: 0.1984412583634279
+      z: -0.16253393027774451
+  updateViewInterval: 0.1

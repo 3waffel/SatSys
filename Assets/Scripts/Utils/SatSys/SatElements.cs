@@ -196,7 +196,7 @@ namespace SatSys
             return new double3(-mu / h * Math.Sin(v), mu / h * (eccentricity + Math.Cos(v)), 0);
         }
 
-        public static double3 TransformIntoInertialVector(
+        public static double3 PerifocalIntoInertial(
             double3 vector,
             double inclination,
             double ascendingNode,
@@ -257,8 +257,8 @@ namespace SatSys
 
             double3 position = GetPerifocalPositionVector(a, e, v);
             double3 velocity = GetPerifocalVelocityVector(a, e, v, mu);
-            position = TransformIntoInertialVector(position, i, o, w);
-            velocity = TransformIntoInertialVector(velocity, i, o, w);
+            position = PerifocalIntoInertial(position, i, o, w);
+            velocity = PerifocalIntoInertial(velocity, i, o, w);
 
             return (position, velocity);
         }

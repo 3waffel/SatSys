@@ -90,6 +90,9 @@ public class SatelliteLogic : ObjectLogic
     void Update()
     {
         updateAction?.Invoke();
+#if UNITY_EDITOR
+        Debug.DrawRay(transform.position, SatUtils.Vector3(satelliteData.velocity), Color.magenta);
+#endif
     }
 
     /// <summary>

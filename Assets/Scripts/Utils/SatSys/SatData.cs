@@ -15,7 +15,7 @@ namespace SatSys
         {
             public double attractorMass = MassOfEarth; // (m^3 * kg^-1 * s^-2)
             public double gravConst = GravConst; // (kg)
-            public double mu => attractorMass * 10e-12 * GravConst; // (km^3 / s^2)
+            public double mu => attractorMass * 10e-12 * gravConst; // (km^3 / s^2)
 
             public KeplerianElements elements;
             public double currentMeanAnomaly;
@@ -79,6 +79,30 @@ namespace SatSys
                     var (position, _) = Kep2Cart(elements, mu, ma);
                     positions.Add(Vector3(position * EarthScale));
                 }
+                return positions;
+            }
+
+            public List<Vector3> GetOrbit()
+            {
+                var positions = new List<Vector3>();
+                double halfMA = 0d;
+                void semiCircle(ref double ma)
+                {
+                    double originMA = ma;
+                    float maxAngle = 0;
+                    for (; ma < 360; ma++)
+                    {
+                        var (pos1, _) = Kep2Cart(elements, mu, originMA);
+                        var (pos2, _) = Kep2Cart(elements, mu, ma);
+                        var a = UnityEngine.Vector3.Angle(Vector3(pos1), Vector3(pos2));
+                        if (a < maxAngle)
+                            break;
+                        maxAngle = a;
+                        positions.Add(Vector3(pos1));
+                    }
+                }
+                semiCircle(ref halfMA);
+                semiCircle(ref halfMA);
                 return positions;
             }
         }
