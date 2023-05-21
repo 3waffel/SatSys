@@ -80,5 +80,11 @@ public class InspectorWindow
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 }

@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Threading.Tasks;
+using SatSys;
 using static SatSys.SatData;
 using static SatSys.SatRecord;
 
@@ -27,6 +27,10 @@ public class ObjectManager : MonoBehaviour
 
     public static ObjectManager Instance;
 
+    // random spawn index
+    static int sttIndex = 0;
+    static int satIndex = 0;
+
     void Awake()
     {
         if (Instance == null)
@@ -41,8 +45,8 @@ public class ObjectManager : MonoBehaviour
 
     void Start()
     {
-        EventManager.ObjectCreated += OnObjectCreated;
-        EventManager.ObjectDeleted += OnObjectDeleted;
+        EventManager.ObjectCreated += CreateObjectFromSO;
+        EventManager.ObjectDeleted += DeferredObjectUpdate;
 
         SpawnFromCollection();
     }
@@ -64,9 +68,8 @@ public class ObjectManager : MonoBehaviour
         EventManager.OnObjectUpdated();
     }
 
-    void BrowserSpawnTest()
+    void BrowserSpawnTest(int itemsToGenerate = 5)
     {
-        int itemsToGenerate = 5;
         for (int i = 0; i < itemsToGenerate; i++)
         {
             var item = Instantiate(browserItemPrefab);
@@ -76,6 +79,44 @@ public class ObjectManager : MonoBehaviour
             item.transform.SetParent(contentContainer);
             item.transform.localScale = Vector2.one;
         }
+    }
+
+    public void RandomSpawnTest(int satCount = 10, int sttCount = 3)
+    {
+        var rnd = new System.Random();
+        var sttNameList = new List<string>();
+
+        for (int i = 0; i < sttCount; i++)
+        {
+            var so = ScriptableObject.CreateInstance<StationSO>();
+            so.name = "TestStt" + sttIndex++;
+            so.longitude = rnd.Next(-180, 180);
+            so.latitude = rnd.Next(-90, 90);
+            CreateObjectFromSO(so);
+            sttNameList.Add(so.name);
+        }
+
+        for (int i = 0; i < satCount; i++)
+        {
+            var data = new SatelliteData(
+                new SatElements.KeplerianElements
+                {
+                    SemiMajorAxis = SatUtils.EarthRadius + rnd.Next(500, 20000),
+                    Eccentricity = rnd.NextDouble() % 0.1,
+                    Inclination = rnd.Next(360),
+                    Periapsis = rnd.Next(360),
+                    AscendingNode = rnd.Next(360),
+                    MeanAnomaly = rnd.Next(360),
+                }
+            );
+            var so = ScriptableObject.CreateInstance<SatelliteSO>();
+            so.name = "TestSat" + satIndex++;
+            so.satelliteData = data;
+            so.targetStationName = sttNameList[rnd.Next(sttCount)];
+            so.receiverStationName = sttNameList[rnd.Next(sttCount)];
+            CreateObjectFromSO(so);
+        }
+        EventManager.OnObjectUpdated();
     }
 
     void CreateBrowserObject(Guid guid, string label)
@@ -99,7 +140,7 @@ public class ObjectManager : MonoBehaviour
         obj.Spawn(guid);
     }
 
-    void OnObjectCreated(ObjectSO so)
+    void CreateObjectFromSO(ObjectSO so)
     {
         Guid guid = Guid.NewGuid();
         CreateBrowserObject(guid, so.name);
@@ -110,7 +151,7 @@ public class ObjectManager : MonoBehaviour
 
     // using task to avoid finding destroyed objects
     // TODO update collection when deleted
-    async void OnObjectDeleted()
+    async void DeferredObjectUpdate()
     {
         await Task.Run(() => new WaitForSeconds(0.1f))
             .ContinueWith(

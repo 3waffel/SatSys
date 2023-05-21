@@ -41,7 +41,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 419132d0517451b49a2db9ff99f030ea, type: 2}
     - target: {fileID: 1052777429296729893, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
       propertyPath: _buttons.Array.size
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1052777429296729893, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
       propertyPath: _buttons.Array.data[0]
@@ -55,6 +55,14 @@ PrefabInstance:
       propertyPath: _buttons.Array.data[2]
       value: 
       objectReference: {fileID: 11400000, guid: 1818ec484c5b6f34881567a63f507356, type: 2}
+    - target: {fileID: 1052777429296729893, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
+      propertyPath: _buttons.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: a7ed205608cef3b409bb49b9b4843abe, type: 2}
+    - target: {fileID: 1052777429296729893, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
+      propertyPath: _buttons.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: 26f40efa5560b9b42b8c006fb5257e90, type: 2}
     - target: {fileID: 2231514754198542920, guid: 07e3a416c6f52c043b01d2e82aeb7eb8, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

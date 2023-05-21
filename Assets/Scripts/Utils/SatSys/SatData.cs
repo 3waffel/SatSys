@@ -69,15 +69,21 @@ namespace SatSys
             /// <returns></returns>
             public List<Vector3> GetScaledOrbit()
             {
-                var positions = new List<Vector3>();
-                for (
-                    double ma = 0;
-                    ma <= orbitMaxMeanAnomaly;
-                    ma += SatDate.GetSeconds(orbitTimeStep) * meanMotionPerSecond
-                )
+                // var positions = new List<Vector3>();
+                // for (
+                //     double ma = 0;
+                //     ma <= orbitMaxMeanAnomaly;
+                //     ma += SatDate.GetSeconds(orbitTimeStep) * meanMotionPerSecond
+                // )
+                // {
+                //     var (position, _) = Kep2Cart(elements, mu, ma);
+                //     positions.Add(Vector3(position * EarthScale));
+                // }
+                // return positions;
+                var positions = GetOrbit();
+                for (int i = 0; i < positions.Count; i++)
                 {
-                    var (position, _) = Kep2Cart(elements, mu, ma);
-                    positions.Add(Vector3(position * EarthScale));
+                    positions[i] *= EarthScale;
                 }
                 return positions;
             }
@@ -90,7 +96,7 @@ namespace SatSys
                 {
                     double originMA = ma;
                     float maxAngle = 0;
-                    for (; ma < 360; ma++)
+                    for (; ma < 360; ma += meanMotionPerSecond * 10)
                     {
                         var (pos1, _) = Kep2Cart(elements, mu, originMA);
                         var (pos2, _) = Kep2Cart(elements, mu, ma);
@@ -98,7 +104,7 @@ namespace SatSys
                         if (a < maxAngle)
                             break;
                         maxAngle = a;
-                        positions.Add(Vector3(pos1));
+                        positions.Add(Vector3(pos2));
                     }
                 }
                 semiCircle(ref halfMA);

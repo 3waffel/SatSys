@@ -48,6 +48,27 @@ public class InfoPanel : MonoBehaviour
                         $"x: {data.position.x}\n\t\ty: {data.position.y}\n\t\tz: {data.position.z}";
                     CreateLabel("Position:\t", pos);
                 }
+
+                CreateLabel(
+                    "SemiMajorAxis:\t",
+                    satellite.satelliteData.elements.SemiMajorAxis.ToString()
+                );
+                CreateLabel(
+                    "Eccentricity:\t",
+                    satellite.satelliteData.elements.Eccentricity.ToString()
+                );
+                CreateLabel(
+                    "Inclination:\t",
+                    satellite.satelliteData.elements.Inclination.ToString()
+                );
+                CreateLabel(
+                    "Periapsis:\t\t",
+                    satellite.satelliteData.elements.Periapsis.ToString()
+                );
+                CreateLabel(
+                    "AscendingNode:\t",
+                    satellite.satelliteData.elements.AscendingNode.ToString()
+                );
                 break;
             case StationLogic station:
                 CreateLabel("Name:\t", station.name);

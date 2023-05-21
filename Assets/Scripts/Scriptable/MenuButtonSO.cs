@@ -19,16 +19,22 @@ public class MenuButtonSO : ScriptableObject
     {
         None,
 
-        // file management
+        // load file
         Open,
+
+        // save scene to file
         Save,
 
         // object management
         Create,
 
-        // lines visibility
+        // show orbits
         Orbits,
+
+        // show sat links
         Links,
+
+        // show info routes
         Routes,
 
         // delect selected
@@ -36,6 +42,12 @@ public class MenuButtonSO : ScriptableObject
 
         // modify selected
         Modify,
+
+        // clear scene
+        Clear,
+
+        // test spawn
+        Test,
     }
 
     public EventType type;
@@ -166,13 +178,11 @@ public class MenuButtonSO : ScriptableObject
                 break;
             case (EventType.Delete):
                 action = () =>
-                {
                     CreateSimpleDialog()
                         .SetTitleText("Notice")
                         .SetContentText("Are you sure to delete the object?")
                         .AddButton("Confirm", () => EventManager.OnObjectDeleted())
                         .AddButton("Cancel", () => { });
-                };
                 break;
             case (EventType.Modify):
                 action = () =>
@@ -183,6 +193,22 @@ public class MenuButtonSO : ScriptableObject
                         // .AddButton("Confirm", () => EventManager.OnObjectDeleted())
                         .AddButton("Cancel", () => { });
                 };
+                break;
+            case (EventType.Clear):
+                action = () =>
+                    CreateSimpleDialog()
+                        .SetTitleText("Notice")
+                        .SetContentText("Are you sure to clear the scene?")
+                        .AddButton("Confirm", () => ObjectManager.Instance.ClearScene())
+                        .AddButton("Cancel", () => { });
+                break;
+            case (EventType.Test):
+                action = () =>
+                    CreateSimpleDialog()
+                        .SetTitleText("Notice")
+                        .SetContentText("Are you sure to test spawn?")
+                        .AddButton("Confirm", () => ObjectManager.Instance.RandomSpawnTest())
+                        .AddButton("Cancel", () => { });
                 break;
         }
     }
