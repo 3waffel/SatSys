@@ -65,7 +65,8 @@ namespace SatSys
             double epsilon = 1e-6
         )
         {
-            double M = meanAnomaly * Math.PI / 180;
+            // TODO
+            double M = meanAnomaly * Math.PI / 180 * Math.PI / 180;
             double E = M;
 
             double delta;
@@ -141,6 +142,7 @@ namespace SatSys
 
             double E = GetEccentricAnomaly(M, e);
             double v = GetTrueAnomaly(E, e);
+            v *= Math.PI / 180;
 
             double r = a * (1 - e * e) / (1 + e * Math.Cos(v));
             double x =

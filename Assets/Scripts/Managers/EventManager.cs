@@ -37,7 +37,7 @@ public static class EventManager
     public static UnityAction<Guid, bool> BrowserItemToggled;
     public static UnityAction<Guid> BrowserItemSelected;
     public static UnityAction<Guid> BrowserItemDeselected;
-    public static UnityAction<ObjectLogic> ObjectInfoSent;
+    public static UnityAction<ObjectLogic> ShowObjectInfo;
 
     public static void OnBrowserItemToggled(Guid guid, bool flag) =>
         BrowserItemToggled?.Invoke(guid, flag);
@@ -55,5 +55,5 @@ public static class EventManager
     /// <summary>
     /// Send info from the scene object to the display window
     /// /// </summary>
-    public static void OnObjectInfoSent(ObjectLogic logic) => ObjectInfoSent?.Invoke(logic);
+    public static void OnShowObjectInfo(ObjectLogic logic) => ShowObjectInfo?.Invoke(logic);
 }

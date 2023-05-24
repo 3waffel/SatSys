@@ -48,6 +48,12 @@ public class MenuButtonSO : ScriptableObject
 
         // test spawn
         Test,
+
+        // enable fixed camera follow
+        Fixed,
+
+        // draw orbit in earth frame
+        Draw,
     }
 
     public EventType type;
@@ -209,6 +215,21 @@ public class MenuButtonSO : ScriptableObject
                         .SetContentText("Are you sure to test spawn?")
                         .AddButton("Confirm", () => ObjectManager.Instance.RandomSpawnTest())
                         .AddButton("Cancel", () => { });
+                break;
+            case (EventType.Fixed):
+                action = () =>
+                {
+                    var camera = FindObjectOfType<InspectorCamera>().transform;
+                    var planet = FindObjectOfType<PlanetLogic>().transform;
+                    if (camera.parent != planet)
+                    {
+                        camera.parent = planet;
+                    }
+                    else
+                    {
+                        camera.parent = planet.parent;
+                    }
+                };
                 break;
         }
     }

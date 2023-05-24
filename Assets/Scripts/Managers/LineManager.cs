@@ -29,6 +29,10 @@ public class LineManager : MonoBehaviour
 
     public static LineManager Instance;
 
+    // TODO
+    static bool drawEnabled = false;
+    public Transform draws;
+
     void Awake()
     {
         if (Instance == null)
@@ -67,6 +71,12 @@ public class LineManager : MonoBehaviour
             go.transform.SetParent(transform);
             routes = go.transform;
         }
+        // if (draws == null)
+        // {
+        //     var go = new GameObject("Draws");
+        //     go.transform.SetParent(transform);
+        //     draws = go.transform;
+        // }
     }
 
     void Start()
@@ -298,6 +308,29 @@ public class LineManager : MonoBehaviour
                     0.1f
                 );
             }
+        }
+    }
+
+    // draw satellite movements in planet transform
+    void UpdateDrawing()
+    {
+        if (draws == null)
+            return;
+        if (!drawEnabled)
+        {
+            foreach (Transform draw in draws)
+            {
+                GameObject.Destroy(draw.gameObject);
+            }
+            return;
+        }
+
+        if (satGraph.IsVerticesEmpty)
+            return;
+        var vertices = satGraph.Vertices.ToArray();
+        foreach (var vertex in vertices)
+        {
+            foreach (Transform draw in draws) { }
         }
     }
 }

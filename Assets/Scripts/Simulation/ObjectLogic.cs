@@ -57,7 +57,7 @@ public class ObjectLogic : MonoBehaviour
             uiLabelCanvas.gameObject.SetActive(true);
             uiLabelCanvas.GetComponent<FacingCamera>().holder = transform;
             uiLabel.text = name;
-            EventManager.OnObjectInfoSent(this);
+            EventManager.OnShowObjectInfo(this);
         }
     }
 }

@@ -25,7 +25,9 @@ namespace SatSys
             /// </summary>
             /// <returns></returns>
             public double meanMotionPerSecond =>
-                Math.Sqrt(mu / Math.Pow(elements.SemiMajorAxis, 3)) * (180 / Math.PI);
+                Math.Sqrt(mu / Math.Pow(elements.SemiMajorAxis, 3))
+                * (180 / Math.PI)
+                * (180 / Math.PI); // TODO
 
             // TODO fix mean motion
             public double orbitMaxMeanAnomaly = 10;
