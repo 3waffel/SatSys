@@ -51,26 +51,12 @@ public class InfoPanel : MonoBehaviour
                         CreateLabel("Position:\t", pos);
                         CreateLabel("Velocity:\t", vel);
 
-                        CreateLabel(
-                            "SemiMajorAxis:\t",
-                            satellite.satelliteData.elements.SemiMajorAxis.ToString()
-                        );
-                        CreateLabel(
-                            "Eccentricity:\t",
-                            satellite.satelliteData.elements.Eccentricity.ToString()
-                        );
-                        CreateLabel(
-                            "Inclination:\t",
-                            satellite.satelliteData.elements.Inclination.ToString()
-                        );
-                        CreateLabel(
-                            "Periapsis:\t\t",
-                            satellite.satelliteData.elements.Periapsis.ToString()
-                        );
-                        CreateLabel(
-                            "AscendingNode:\t",
-                            satellite.satelliteData.elements.AscendingNode.ToString()
-                        );
+                        CreateLabel("SemiMajorAxis:\t", data.elements.SemiMajorAxis.ToString());
+                        CreateLabel("Eccentricity:\t", data.elements.Eccentricity.ToString());
+                        CreateLabel("Inclination:\t", data.elements.Inclination.ToString());
+                        CreateLabel("Periapsis:\t\t", data.elements.Periapsis.ToString());
+                        CreateLabel("AscendingNode:\t", data.elements.AscendingNode.ToString());
+                        CreateLabel("MeanAnomaly:\t", data.elements.MeanAnomaly.ToString());
                     }
                     else
                     {

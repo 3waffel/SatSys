@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using static SatSys.SatUtils;
+using One_Sgp4;
 
 namespace SatSys
 {
@@ -265,7 +266,45 @@ namespace SatSys
             return (position, velocity);
         }
 
-        [Serializable]
-        public struct TwoLineElements { }
+        // TODO
+        public static Tle Kep2Tle(KeplerianElements elements)
+        {
+            string line1 = new String('0', 68);
+            string line2 = new String('0', 68);
+
+            int getSum(string str)
+            {
+                int sum = 0;
+                for (int i = 0; i < str.Length - 1; i++)
+                {
+                    if (char.IsNumber(str[i]))
+                        sum += (int)Char.GetNumericValue(str[i]);
+                    else
+                    {
+                        if (str[i] == '-')
+                            sum++;
+                    }
+                }
+                return sum;
+            }
+            line1 += (getSum(line1) % 10);
+            line2 += (getSum(line2) % 10);
+            return ParserTLE.parseTle(line1, line2);
+        }
+
+        public static KeplerianElements Tle2Kep(Tle tle, double mu)
+        {
+            return new KeplerianElements
+            {
+                SemiMajorAxis =
+                    Math.Pow(mu, 1 / 3)
+                    / (2 * tle.getMeanMotion() * Math.Pow(Math.PI, 1 / 3) / 86400),
+                Eccentricity = tle.getEccentriciy(),
+                Inclination = tle.getInclination(),
+                Periapsis = tle.getPerigee(),
+                AscendingNode = tle.getRightAscendingNode(),
+                MeanAnomaly = tle.getMeanAnomoly(),
+            };
+        }
     }
 }

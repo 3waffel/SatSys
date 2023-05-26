@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using static SatSys.SatElements;
 using static SatSys.SatUtils;
+using One_Sgp4;
 
 namespace SatSys
 {
@@ -15,17 +16,20 @@ namespace SatSys
         {
             public double attractorMass = MassOfEarth; // (m^3 * kg^-1 * s^-2)
             public double gravConst = GravConst; // (kg)
-            public double mu => attractorMass * 10e-12 * gravConst; // (km^3 / s^2)
+            public double mu => attractorMass * gravConst;
+            public double muInKm => mu * 10e-12; // (km^3 / s^2)
 
             public KeplerianElements elements;
             public double currentMeanAnomaly;
+
+            public Tle tle;
 
             /// <summary>
             /// (degrees per second)
             /// </summary>
             /// <returns></returns>
             public double meanMotionPerSecond =>
-                Math.Sqrt(mu / Math.Pow(elements.SemiMajorAxis, 3))
+                Math.Sqrt(muInKm / Math.Pow(elements.SemiMajorAxis, 3))
                 * (180 / Math.PI)
                 * (180 / Math.PI); // TODO
 
@@ -46,9 +50,16 @@ namespace SatSys
                 UpdateAnomaly(0);
             }
 
-            public void UpdateInternalState()
+            public SatelliteData(Tle tle)
             {
-                (position, velocity) = Kep2Cart(elements, mu, currentMeanAnomaly);
+                this.tle = tle;
+                this.elements = Tle2Kep(tle, mu);
+                UpdateInternalStateByTle(0);
+            }
+
+            void UpdateInternalState()
+            {
+                (position, velocity) = Kep2Cart(elements, muInKm, currentMeanAnomaly);
             }
 
             /// <summary>
@@ -61,7 +72,26 @@ namespace SatSys
                 currentMeanAnomaly =
                     (elements.MeanAnomaly + elapsedTimeInSeconds * meanMotionPerSecond) % 360;
 
-                UpdateInternalState();
+                if (tle != null)
+                    UpdateInternalStateByTle(time);
+                else
+                    UpdateInternalState();
+            }
+
+            public void UpdateInternalStateByTle(double timeEpoch)
+            {
+                if (tle == null)
+                    return;
+
+                var data = SatFunctions.getSatPositionAtTime(
+                    tle,
+                    new EpochTime(SatDate.GetDateTime(Timeline.startDate + timeEpoch)),
+                    Sgp4.wgsConstant.WGS_84
+                );
+                var pos = data.getPositionData();
+                var vel = data.getVelocityData();
+                position = new double3(pos.x, pos.y, pos.z);
+                velocity = new double3(vel.x, vel.y, vel.z);
             }
 
             /// <summary>
@@ -71,17 +101,6 @@ namespace SatSys
             /// <returns></returns>
             public List<Vector3> GetScaledOrbit()
             {
-                // var positions = new List<Vector3>();
-                // for (
-                //     double ma = 0;
-                //     ma <= orbitMaxMeanAnomaly;
-                //     ma += SatDate.GetSeconds(orbitTimeStep) * meanMotionPerSecond
-                // )
-                // {
-                //     var (position, _) = Kep2Cart(elements, mu, ma);
-                //     positions.Add(Vector3(position * EarthScale));
-                // }
-                // return positions;
                 var positions = GetOrbit();
                 for (int i = 0; i < positions.Count; i++)
                 {
@@ -93,24 +112,44 @@ namespace SatSys
             public List<Vector3> GetOrbit()
             {
                 var positions = new List<Vector3>();
-                double halfMA = 0d;
-                void semiCircle(ref double ma)
+                if (tle != null)
                 {
-                    double originMA = ma;
-                    float maxAngle = 0;
-                    for (; ma < 360; ma += meanMotionPerSecond * 10)
+                    for (double t = Timeline.startDate; t < Timeline.endDate; t += 0.01)
                     {
-                        var (pos1, _) = Kep2Cart(elements, mu, originMA);
-                        var (pos2, _) = Kep2Cart(elements, mu, ma);
-                        var a = UnityEngine.Vector3.Angle(Vector3(pos1), Vector3(pos2));
-                        if (a < maxAngle)
-                            break;
-                        maxAngle = a;
-                        positions.Add(Vector3(pos2));
+                        var data = SatFunctions.getSatPositionAtTime(
+                            tle,
+                            new EpochTime(SatDate.GetDateTime(t)),
+                            Sgp4.wgsConstant.WGS_84
+                        );
+                        var pos = data.getPositionData();
+                        var pos_d3 = new double3(pos.x, pos.y, pos.z);
+                        positions.Add(Vector3(pos_d3));
                     }
                 }
-                semiCircle(ref halfMA);
-                semiCircle(ref halfMA);
+                else
+                {
+                    double halfMA = 0d;
+                    void semiCircle(ref double ma)
+                    {
+                        double originMA = ma;
+                        float maxAngle = 0;
+                        for (; ma < 360; ma += meanMotionPerSecond * 10)
+                        {
+                            var (pos1, _) = Kep2Cart(elements, muInKm, originMA);
+                            var (pos2, _) = Kep2Cart(elements, muInKm, ma);
+                            var a = UnityEngine.Vector3.Angle(Vector3(pos1), Vector3(pos2));
+                            if (a < maxAngle)
+                                break;
+                            maxAngle = a;
+                            positions.Add(Vector3(pos2));
+                        }
+                    }
+                    semiCircle(ref halfMA);
+                    semiCircle(ref halfMA);
+
+                    var (finalPos, _) = Kep2Cart(elements, muInKm, 0);
+                    positions.Add(Vector3(finalPos));
+                }
                 return positions;
             }
         }

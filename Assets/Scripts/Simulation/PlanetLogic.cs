@@ -42,7 +42,7 @@ public class PlanetLogic : MonoBehaviour
 
     void OnRenderObject()
     {
-        DrawAxis();
+        // DrawAxis();
     }
 
     void CreateLineMaterial()

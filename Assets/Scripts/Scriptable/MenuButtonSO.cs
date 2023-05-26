@@ -80,7 +80,7 @@ public class MenuButtonSO : ScriptableObject
         switch (type)
         {
             case (EventType.Open):
-                action += FileManager.OpenTask;
+                action += FileManager.OpenFile;
                 break;
             case (EventType.Save):
                 action += FileManager.SaveTask;

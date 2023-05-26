@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SatSys;
 using static SatSys.SatData;
 using static SatSys.SatRecord;
+using One_Sgp4;
 
 [DisallowMultipleComponent]
 public class ObjectManager : MonoBehaviour
@@ -102,7 +103,8 @@ public class ObjectManager : MonoBehaviour
                 new SatElements.KeplerianElements
                 {
                     SemiMajorAxis = SatUtils.EarthRadius + rnd.Next(500, 20000),
-                    Eccentricity = rnd.NextDouble() % 0.1,
+                    // Eccentricity = rnd.NextDouble() % 0.1,
+                    Eccentricity = 0,
                     Inclination = rnd.Next(360),
                     Periapsis = rnd.Next(360),
                     AscendingNode = rnd.Next(360),
@@ -194,6 +196,23 @@ public class ObjectManager : MonoBehaviour
         logic.receiverStationName = satellite.receiverStationName;
         logic.orbitRecord = satellite.records;
         logic.InitializeRecordMovement();
+    }
+
+    void CreateSatelliteFromTle(Tle tle)
+    {
+        Guid guid = Guid.NewGuid();
+        CreateBrowserObject(guid, tle.getName());
+
+        var data = new SatelliteData(tle);
+
+        var sat = Instantiate(defaultSatellitePrefab);
+        sat.name = tle.getName();
+        sat.transform.SetParent(targetScene);
+        var logic = sat.GetComponent<SatelliteLogic>();
+        logic.Guid = guid;
+        logic.targetPlanet = targetPlanet;
+        logic.satelliteData = data;
+        logic.InitializeDirectMovement();
     }
 
     public void ClearScene()
@@ -331,6 +350,15 @@ public class ObjectManager : MonoBehaviour
             CreateSatelliteFromRecord(satellite);
         }
         Timeline.OnChangeTimeProperties(task.timeStep, task.startDate, task.endDate);
+        EventManager.OnObjectUpdated();
+    }
+
+    public void LoadTleList(List<Tle> tleList)
+    {
+        foreach (var tle in tleList)
+        {
+            CreateSatelliteFromTle(tle);
+        }
         EventManager.OnObjectUpdated();
     }
 }

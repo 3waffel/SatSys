@@ -5,29 +5,38 @@ using Newtonsoft.Json;
 using static SatSys.SatRecord;
 using System.IO;
 using SFB;
+using One_Sgp4;
 
 public class FileManager : MonoBehaviour
 {
-    public static void OpenTask()
+    public static void OpenFile()
     {
         StandaloneFileBrowser.OpenFilePanelAsync(
             "Open File",
             "",
-            "json",
+            new[] { new ExtensionFilter("", "json"), new ExtensionFilter("", "txt") },
             false,
             (paths) =>
             {
                 if (paths.Length == 0)
                     return;
-                using (StreamReader file = File.OpenText(paths[0]))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    SatTask task = (SatTask)serializer.Deserialize(file, typeof(SatTask));
-                    ObjectManager.Instance.ClearScene();
-                    ObjectManager.Instance.LoadTask(task);
-                }
+                string fileName = paths[0];
+                if (fileName.EndsWith(".json"))
+                    OpenTask(fileName);
+                else
+                    OpenTleFile(fileName);
             }
         );
+    }
+
+    public static void OpenTask(string fileName)
+    {
+        using (StreamReader file = File.OpenText(fileName))
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            SatTask task = (SatTask)serializer.Deserialize(file, typeof(SatTask));
+            ObjectManager.Instance.LoadTask(task);
+        }
     }
 
     public static void SaveTask()
@@ -55,5 +64,11 @@ public class FileManager : MonoBehaviour
                 }
             }
         );
+    }
+
+    public static void OpenTleFile(string fileName)
+    {
+        var tleList = ParserTLE.ParseFile(fileName);
+        ObjectManager.Instance.LoadTleList(tleList);
     }
 }

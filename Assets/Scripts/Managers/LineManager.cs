@@ -6,6 +6,7 @@ using SatSys;
 using QuikGraph;
 using System;
 using System.Linq;
+using System.Timers;
 
 [DisallowMultipleComponent]
 public class LineManager : MonoBehaviour
@@ -32,6 +33,10 @@ public class LineManager : MonoBehaviour
     // TODO
     static bool drawEnabled = false;
     public Transform draws;
+
+    // async update
+    bool updateFlag = false;
+    Timer timer;
 
     void Awake()
     {
@@ -83,13 +88,32 @@ public class LineManager : MonoBehaviour
     {
         EventManager.ObjectUpdated += UpdateGraph;
         EventManager.ObjectUpdated += UpdateOrbits;
+        EventManager.ObjectUpdated += UpdateTask;
+
+        // Update only when time changes
+        EventManager.TimeChanged += (_) => updateFlag = true;
+        timer = new Timer(100);
+        timer.AutoReset = false;
+        timer.Elapsed += (_, _) =>
+        {
+            updateFlag = false;
+        };
     }
 
-    void Update()
+    void UpdateTask()
     {
         UpdateGraphByVisibility();
         UpdateSatLinksByGraph();
         UpdateStationRoutes();
+    }
+
+    void Update()
+    {
+        if (updateFlag)
+        {
+            UpdateTask();
+            timer.Start();
+        }
     }
 
     public void CreateLine(
@@ -262,6 +286,8 @@ public class LineManager : MonoBehaviour
     {
         if (links == null)
             return;
+        if (!links.gameObject.activeSelf)
+            return;
         foreach (Transform link in links)
         {
             GameObject.Destroy(link.gameObject);
@@ -283,6 +309,8 @@ public class LineManager : MonoBehaviour
     public void UpdateStationRoutes()
     {
         if (routes == null)
+            return;
+        if (!routes.gameObject.activeSelf)
             return;
         foreach (Transform route in routes)
         {
@@ -311,7 +339,7 @@ public class LineManager : MonoBehaviour
         }
     }
 
-    // draw satellite movements in planet transform
+    // TODO draw satellite movements in planet transform
     void UpdateDrawing()
     {
         if (draws == null)

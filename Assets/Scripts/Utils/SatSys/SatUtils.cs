@@ -31,6 +31,7 @@ namespace SatSys
         public const float EarthRadius = 6757;
 
         public static float EarthScale = (float)(0.5 / EarthRadius);
+
         // public static float EarthScale =>
         //     MonoBehaviour.FindObjectOfType<PlanetLogic>().SphereRadius / EarthRadius;
 
