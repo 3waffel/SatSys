@@ -123,6 +123,8 @@ public class MenuButtonSO : ScriptableObject
                         && double.TryParse(values[4], out double res4)
                         && double.TryParse(values[5], out double res5)
                         && res0 > SatUtils.EarthRadius
+                        && res1 >= 0
+                        && res1 < 1
                     )
                     {
                         satSO.satelliteData = new SatelliteData(
@@ -144,7 +146,7 @@ public class MenuButtonSO : ScriptableObject
                     else
                     {
                         CreateSimpleDialog()
-                            .SetTitleText("Warning")
+                            .SetTitleText("Error")
                             .SetContentText("Invalid Input")
                             .AddButton("Confirm", () => { });
                     }

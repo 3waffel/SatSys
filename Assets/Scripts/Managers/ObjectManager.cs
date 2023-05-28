@@ -111,43 +111,13 @@ public class ObjectManager : MonoBehaviour
                     MeanAnomaly = rnd.Next(360),
                 }
             );
-            var so = ScriptableObject.CreateInstance<SatelliteSO>();
-            so.name = "TestSat" + satIndex++;
-            so.satelliteData = data;
-            so.targetStationName = sttNameList[rnd.Next(sttCount)];
-            so.receiverStationName = sttNameList[rnd.Next(sttCount)];
-            CreateObjectFromSO(so);
+            CreateSatelliteFromData(
+                data,
+                "TestSat" + satIndex++,
+                sttNameList[rnd.Next(sttCount)],
+                sttNameList[rnd.Next(sttCount)]
+            );
         }
-        EventManager.OnObjectUpdated();
-    }
-
-    void CreateBrowserObject(Guid guid, string label)
-    {
-        var item = Instantiate(browserItemPrefab);
-
-        item.GetComponentInChildren<TMP_Text>().text = label;
-        item.GetComponentInChildren<ObjectBrowserItem>().Guid = guid;
-        item.transform.SetParent(contentContainer);
-        item.transform.localScale = Vector2.one;
-    }
-
-    void CreateInspectorObject(Guid guid, ObjectSO obj)
-    {
-        obj.targetScene = targetScene;
-        obj.targetPlanet = targetPlanet;
-        if (obj.itemPrefab == null)
-        {
-            obj.itemPrefab = obj is SatelliteSO ? defaultSatellitePrefab : defaultStationPrefab;
-        }
-        obj.Spawn(guid);
-    }
-
-    void CreateObjectFromSO(ObjectSO so)
-    {
-        Guid guid = Guid.NewGuid();
-        CreateBrowserObject(guid, so.name);
-        CreateInspectorObject(guid, so);
-        objectCollection.Add(so);
         EventManager.OnObjectUpdated();
     }
 
@@ -166,7 +136,50 @@ public class ObjectManager : MonoBehaviour
             );
     }
 
-    void CreateSatelliteFromData(SatelliteData data, string label)
+    void CreateBrowserObject(Guid guid, string label)
+    {
+        var item = Instantiate(browserItemPrefab);
+
+        item.GetComponentInChildren<TMP_Text>().text = label;
+        item.GetComponentInChildren<ObjectBrowserItem>().Guid = guid;
+        item.transform.SetParent(contentContainer);
+        item.transform.localScale = Vector2.one;
+    }
+
+    void CreateInspectorObject(Guid guid, ObjectSO obj)
+    {
+        obj.targetScene = targetScene;
+        obj.targetPlanet = targetPlanet;
+        if (obj.itemPrefab == null)
+        {
+            switch (obj)
+            {
+                case (SatelliteSO):
+                    obj.itemPrefab = defaultSatellitePrefab;
+                    break;
+                case (StationSO):
+                    obj.itemPrefab = defaultStationPrefab;
+                    break;
+            }
+        }
+        obj.Spawn(guid);
+    }
+
+    void CreateObjectFromSO(ObjectSO so)
+    {
+        Guid guid = Guid.NewGuid();
+        CreateBrowserObject(guid, so.name);
+        CreateInspectorObject(guid, so);
+        objectCollection.Add(so);
+        EventManager.OnObjectUpdated();
+    }
+
+    void CreateSatelliteFromData(
+        SatelliteData data,
+        string label,
+        string targetStationName = null,
+        string receiverStationName = null
+    )
     {
         Guid guid = Guid.NewGuid();
         CreateBrowserObject(guid, label);
@@ -177,7 +190,9 @@ public class ObjectManager : MonoBehaviour
         var logic = sat.GetComponent<SatelliteLogic>();
         logic.Guid = guid;
         logic.targetPlanet = targetPlanet;
-        logic.satelliteData = data;
+        logic.satelliteData = new SatelliteData(data);
+        logic.targetStationName = targetStationName;
+        logic.receiverStationName = receiverStationName;
         logic.InitializeDirectMovement();
     }
 
@@ -211,7 +226,7 @@ public class ObjectManager : MonoBehaviour
         var logic = sat.GetComponent<SatelliteLogic>();
         logic.Guid = guid;
         logic.targetPlanet = targetPlanet;
-        logic.satelliteData = data;
+        logic.satelliteData = new(data);
         logic.InitializeDirectMovement();
     }
 

@@ -17,7 +17,7 @@ public class SatelliteSO : ObjectSO
         var item = base.Spawn(guid);
 
         var satellite = item.GetComponent<SatelliteLogic>();
-        satellite.satelliteData = satelliteData;
+        satellite.satelliteData = new SatData.SatelliteData(satelliteData);
         satellite.targetStationName = targetStationName;
         satellite.receiverStationName = receiverStationName;
         return item;

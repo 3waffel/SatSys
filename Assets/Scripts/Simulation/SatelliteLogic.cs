@@ -102,7 +102,7 @@ public class SatelliteLogic : ObjectLogic
     public void InitializeDirectMovement()
     {
         transform.position = SatUtils.Vector3(satelliteData.position * SatUtils.EarthScale);
-        EventManager.TimeChanged += (time) => satelliteData.UpdateAnomaly(time);
+        EventManager.TimeChanged += (time) => satelliteData.UpdateState(time);
         EventManager.TimeStepChanged += (timeStep) => updatePositionInterval = 1e-5f / timeStep;
 
         updateAction = () =>

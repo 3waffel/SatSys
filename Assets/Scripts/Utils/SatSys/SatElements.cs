@@ -236,7 +236,7 @@ namespace SatSys
         }
 
         /// <summary>
-        ///
+        /// TODO accuracy
         /// </summary>
         /// <param name="elements"></param>
         /// <param name="mu">(km^3 * s^-2)</param>
@@ -266,11 +266,30 @@ namespace SatSys
             return (position, velocity);
         }
 
-        // TODO
-        public static Tle Kep2Tle(KeplerianElements elements)
+        public static Tle Kep2Tle(KeplerianElements elements, double mu)
         {
-            string line1 = new String('0', 68);
-            string line2 = new String('0', 68);
+            // use beidou3-g3 as placeholder
+            string line1 = "1 45807U 20040A   23145.89727381 -.00000349  00000-0  00000-0 0  9997";
+            List<string> strList = new List<string>();
+            strList.Add("2");
+            strList.Add("00000");
+            strList.Add(String.Format("{0,8:##0.0000}", elements.Inclination));
+            strList.Add(String.Format("{0,8:##0.0000}", elements.AscendingNode));
+
+            var eccSplit = elements.Eccentricity.ToString().Split(".");
+            var eccDecimal = eccSplit.Length > 1 ? eccSplit[1] : "0";
+            strList.Add(eccDecimal.PadRight(7, '0'));
+
+            strList.Add(String.Format("{0,8:##0.0000}", elements.Periapsis));
+            strList.Add(String.Format("{0,8:##0.0000}", elements.MeanAnomaly));
+
+            double meanMotion =
+                Math.Pow(mu, 1 / 3)
+                / (2 * elements.SemiMajorAxis * Math.Pow(Math.PI, 1 / 3) / 86400);
+            strList.Add(String.Format("{0,11:#0.00000000}", meanMotion));
+            string line2 = String.Join(" ", strList);
+            line2 += "00000";
+            line2 += (getSum(line2) % 10);
 
             int getSum(string str)
             {
@@ -287,8 +306,6 @@ namespace SatSys
                 }
                 return sum;
             }
-            line1 += (getSum(line1) % 10);
-            line2 += (getSum(line2) % 10);
             return ParserTLE.parseTle(line1, line2);
         }
 

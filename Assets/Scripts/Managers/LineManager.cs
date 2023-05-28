@@ -220,6 +220,7 @@ public class LineManager : MonoBehaviour
         }
         semiCircle(ref halfIndex);
         semiCircle(ref halfIndex);
+        positions.Add(positions[0]);
 
         CreateLine(positions.ToArray(), parent, lineDefaultMaterial, orbitColor, orbitColor);
     }

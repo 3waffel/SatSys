@@ -80,7 +80,7 @@ namespace SatSys
             var result = new List<TimedPosition>();
             for (double t = 0; t < timeSpan; t += timeStep)
             {
-                data.UpdateAnomaly(t);
+                data.UpdateState(t);
                 result.Add(new TimedPosition { elapsedTime = t, position = data.position, });
             }
             return result;

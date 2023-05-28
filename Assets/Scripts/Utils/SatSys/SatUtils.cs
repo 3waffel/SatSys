@@ -90,6 +90,9 @@ namespace SatSys
 
             public static implicit operator Vector3(FixedVector3 vector) =>
                 new Vector3(vector.x, vector.y, vector.z);
+
+            public static implicit operator double3(FixedVector3 vector) =>
+                new double3(vector.x, vector.y, vector.z);
         }
     }
 }

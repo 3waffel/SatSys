@@ -16,13 +16,16 @@ namespace SatSys
         {
             public double attractorMass = MassOfEarth; // (m^3 * kg^-1 * s^-2)
             public double gravConst = GravConst; // (kg)
-            public double mu => attractorMass * gravConst;
+            public double mu => attractorMass * gravConst; // (m^3 / s^2)
             public double muInKm => mu * 10e-12; // (km^3 / s^2)
 
+            // different movement types
             public KeplerianElements elements;
-            public double currentMeanAnomaly;
 
             public Tle tle;
+
+            public List<SatRecord.TimedPosition> orbitRecord;
+            private int recordIndex = 0;
 
             /// <summary>
             /// (degrees per second)
@@ -34,9 +37,7 @@ namespace SatSys
                 * (180 / Math.PI); // TODO
 
             // TODO fix mean motion
-            public double orbitMaxMeanAnomaly = 10;
-            public double orbitTimeStep = 0.001;
-            public double orbitPeriod;
+            public double currentMeanAnomaly;
 
             [field: SerializeField]
             public double3 position { get; private set; }
@@ -47,38 +48,35 @@ namespace SatSys
             public SatelliteData(KeplerianElements elements)
             {
                 this.elements = elements;
-                UpdateAnomaly(0);
+                this.tle = Kep2Tle(elements, mu);
+                UpdateState(0);
             }
 
             public SatelliteData(Tle tle)
             {
                 this.tle = tle;
                 this.elements = Tle2Kep(tle, mu);
-                UpdateInternalStateByTle(0);
+                UpdateState(0);
             }
 
-            void UpdateInternalState()
+            public SatelliteData(SatelliteData data)
             {
+                this.attractorMass = data.attractorMass;
+                this.gravConst = data.gravConst;
+                this.elements = data.elements;
+                this.tle = data.tle ?? Kep2Tle(elements, mu);
+                this.orbitRecord = data.orbitRecord;
+            }
+
+            private void UpdateInternalStateByKep(double timeEpoch)
+            {
+                var elapsedTimeInSeconds = SatDate.GetSeconds(timeEpoch);
+                currentMeanAnomaly =
+                    (elements.MeanAnomaly + elapsedTimeInSeconds * meanMotionPerSecond) % 360;
                 (position, velocity) = Kep2Cart(elements, muInKm, currentMeanAnomaly);
             }
 
-            /// <summary>
-            /// update current mean anomaly based on elapsed time in seconds
-            /// </summary>
-            /// <param name="time"></param>
-            public void UpdateAnomaly(double time)
-            {
-                var elapsedTimeInSeconds = SatDate.GetSeconds(time);
-                currentMeanAnomaly =
-                    (elements.MeanAnomaly + elapsedTimeInSeconds * meanMotionPerSecond) % 360;
-
-                if (tle != null)
-                    UpdateInternalStateByTle(time);
-                else
-                    UpdateInternalState();
-            }
-
-            public void UpdateInternalStateByTle(double timeEpoch)
+            private void UpdateInternalStateByTle(double timeEpoch)
             {
                 if (tle == null)
                     return;
@@ -94,19 +92,28 @@ namespace SatSys
                 velocity = new double3(vel.x, vel.y, vel.z);
             }
 
-            /// <summary>
-            /// get a list of positions,
-            /// used to draw orbit line
-            /// </summary>
-            /// <returns></returns>
-            public List<Vector3> GetScaledOrbit()
+            public void UpdateInternalStateByRecord(double timeEpoch)
             {
-                var positions = GetOrbit();
-                for (int i = 0; i < positions.Count; i++)
-                {
-                    positions[i] *= EarthScale;
-                }
-                return positions;
+                if (orbitRecord == null || orbitRecord.Count == 0)
+                    return;
+
+                float timeStep = (float)(orbitRecord[1].elapsedTime - orbitRecord[0].elapsedTime);
+                int idx = (int)(timeEpoch / timeStep);
+                idx = orbitRecord.FindIndex(idx, (item) => item.elapsedTime >= timeEpoch);
+                recordIndex = idx < 0 ? orbitRecord.Count - 1 : idx;
+                position = orbitRecord[recordIndex].position;
+            }
+
+            /// <summary>
+            /// update current mean anomaly based on elapsed time in seconds
+            /// </summary>
+            /// <param name="time"></param>
+            public void UpdateState(double timeEpoch)
+            {
+                if (tle != null)
+                    UpdateInternalStateByTle(timeEpoch);
+                else
+                    UpdateInternalStateByKep(timeEpoch);
             }
 
             public List<Vector3> GetOrbit()
@@ -114,7 +121,15 @@ namespace SatSys
                 var positions = new List<Vector3>();
                 if (tle != null)
                 {
-                    for (double t = Timeline.startDate; t < Timeline.endDate; t += 0.01)
+                    // period in julian date
+                    var timeStep = 0.01 / tle.getMeanMotion();
+                    var period = 1 / tle.getMeanMotion();
+
+                    for (
+                        double t = Timeline.startDate;
+                        t < Timeline.startDate + period;
+                        t += timeStep
+                    )
                     {
                         var data = SatFunctions.getSatPositionAtTime(
                             tle,
@@ -125,6 +140,7 @@ namespace SatSys
                         var pos_d3 = new double3(pos.x, pos.y, pos.z);
                         positions.Add(Vector3(pos_d3));
                     }
+                    positions.Add(positions[0]);
                 }
                 else
                 {
@@ -147,8 +163,22 @@ namespace SatSys
                     semiCircle(ref halfMA);
                     semiCircle(ref halfMA);
 
-                    var (finalPos, _) = Kep2Cart(elements, muInKm, 0);
-                    positions.Add(Vector3(finalPos));
+                    positions.Add(positions[0]);
+                }
+                return positions;
+            }
+
+            /// <summary>
+            /// get a list of positions,
+            /// used to draw orbit line
+            /// </summary>
+            /// <returns></returns>
+            public List<Vector3> GetScaledOrbit()
+            {
+                var positions = GetOrbit();
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    positions[i] *= EarthScale;
                 }
                 return positions;
             }
