@@ -247,26 +247,30 @@ public class ObjectManager : MonoBehaviour
         EventManager.OnObjectUpdated();
     }
 
-#nullable enable
-    public SatTask? SaveCollection()
+    public SatTask SaveCollection()
     {
-        if (objectCollection.Count == 0)
-            return null;
-
         var stations = new List<Station>();
         var satellites = new List<Satellite>();
-        foreach (var so in objectCollection)
+        if (objectCollection != null)
         {
-            switch (so)
+            foreach (var so in objectCollection)
             {
-                case (StationSO stt):
-                    stations.Add(new Station(stt));
-                    break;
-                case (SatelliteSO sat):
-                    satellites.Add(
-                        new Satellite(sat, Timeline.startDate, Timeline.endDate, Timeline.timeStep)
-                    );
-                    break;
+                switch (so)
+                {
+                    case (StationSO stt):
+                        stations.Add(new Station(stt));
+                        break;
+                    case (SatelliteSO sat):
+                        satellites.Add(
+                            new Satellite(
+                                sat,
+                                Timeline.startDate,
+                                Timeline.endDate,
+                                Timeline.timeStep
+                            )
+                        );
+                        break;
+                }
             }
         }
 
@@ -280,14 +284,12 @@ public class ObjectManager : MonoBehaviour
         return task;
     }
 
-    public SatTask? SaveScene()
+    public SatTask SaveScene()
     {
         var logics = FindObjectsOfType<ObjectLogic>();
-        if (logics.Length == 0)
-            return null;
-
         var stations = new List<Station>();
         var satellites = new List<Satellite>();
+
         foreach (var logic in logics)
         {
             switch (logic)
@@ -349,20 +351,24 @@ public class ObjectManager : MonoBehaviour
         return task;
     }
 
-#nullable restore
-
     public void LoadTask(SatTask task)
     {
-        foreach (var station in task.stations)
+        if (task.stations != null)
         {
-            var so = station.ToStationSO();
-            Guid guid = Guid.NewGuid();
-            CreateBrowserObject(guid, so.name);
-            CreateInspectorObject(guid, so);
+            foreach (var station in task.stations)
+            {
+                var so = station.ToStationSO();
+                Guid guid = Guid.NewGuid();
+                CreateBrowserObject(guid, so.name);
+                CreateInspectorObject(guid, so);
+            }
         }
-        foreach (var satellite in task.satellites)
+        if (task.satellites != null)
         {
-            CreateSatelliteFromRecord(satellite);
+            foreach (var satellite in task.satellites)
+            {
+                CreateSatelliteFromRecord(satellite);
+            }
         }
         Timeline.OnChangeTimeProperties(task.timeStep, task.startDate, task.endDate);
         EventManager.OnObjectUpdated();

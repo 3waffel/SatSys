@@ -134,6 +134,7 @@ public class SatelliteLogic : ObjectLogic
         EventManager.TimeChanged += (time) =>
         {
             int idx = (int)(time / step);
+            idx = idx >= orbitRecord.Count ? orbitRecord.Count - 1 : idx;
             idx = orbitRecord.FindIndex(idx, (item) => item.elapsedTime >= time);
             recordIndex = idx < 0 ? orbitRecord.Count - 1 : idx;
         };
