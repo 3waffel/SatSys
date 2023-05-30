@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using Newtonsoft.Json;
+using One_Sgp4;
 
 namespace SatSys
 {
@@ -64,6 +65,20 @@ namespace SatSys
                     y = vector.y,
                     z = vector.z
                 };
+
+            public static implicit operator FixedDouble3(Point3d vector) =>
+                new FixedDouble3
+                {
+                    x = vector.x,
+                    y = vector.y,
+                    z = vector.z
+                };
+
+            public static implicit operator Vector3(FixedDouble3 vector) =>
+                new Vector3((float)vector.x, (float)vector.y, (float)vector.z);
+
+            public static implicit operator double3(FixedDouble3 vector) =>
+                new double3(vector.x, vector.y, vector.z);
         }
 
         public struct FixedVector3
@@ -88,11 +103,22 @@ namespace SatSys
                     z = (float)vector.z
                 };
 
+            public static implicit operator FixedVector3(Point3d vector) =>
+                new FixedVector3
+                {
+                    x = (float)vector.x,
+                    y = (float)vector.y,
+                    z = (float)vector.z
+                };
+
             public static implicit operator Vector3(FixedVector3 vector) =>
                 new Vector3(vector.x, vector.y, vector.z);
 
             public static implicit operator double3(FixedVector3 vector) =>
                 new double3(vector.x, vector.y, vector.z);
         }
+
+        public static Vector3 FixInclination(Point3d p3d) =>
+            Quaternion.AngleAxis(90, UnityEngine.Vector3.right) * (FixedVector3)p3d;
     }
 }

@@ -86,10 +86,16 @@ namespace SatSys
                     new EpochTime(SatDate.GetDateTime(Timeline.startDate + timeEpoch)),
                     Sgp4.wgsConstant.WGS_84
                 );
+
                 var pos = data.getPositionData();
                 var vel = data.getVelocityData();
-                position = new double3(pos.x, pos.y, pos.z);
-                velocity = new double3(vel.x, vel.y, vel.z);
+
+                // position = new double3(pos.x, pos.y, pos.z);
+                // velocity = new double3(vel.x, vel.y, vel.z);
+
+                // TODO fix inclination
+                position = (FixedDouble3)FixInclination(pos);
+                velocity = (FixedDouble3)FixInclination(vel);
             }
 
             public void UpdateInternalStateByRecord(double timeEpoch)
@@ -137,8 +143,11 @@ namespace SatSys
                             Sgp4.wgsConstant.WGS_84
                         );
                         var pos = data.getPositionData();
-                        var pos_d3 = new double3(pos.x, pos.y, pos.z);
-                        positions.Add(Vector3(pos_d3));
+                        // var pos_d3 = new double3(pos.x, pos.y, pos.z);
+                        // positions.Add(Vector3(pos_d3));
+
+                        // TODO fix inclination
+                        positions.Add(FixInclination(pos));
                     }
                     positions.Add(positions[0]);
                 }

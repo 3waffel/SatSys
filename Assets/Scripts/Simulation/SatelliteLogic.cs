@@ -234,9 +234,12 @@ public class SatelliteLogic : ObjectLogic
 
         Vector3 centerToTarget = targetPosition - targetPlanet.position;
         Vector3 centerToSelf = transform.position - targetPlanet.position;
-        var angle = Vector3.Angle(centerToTarget, centerToSelf);
 
-        bool isVisible = distance > planetRadius || (distance < planetRadius && angle < 90);
+        var angle = Vector3.Angle(centerToTarget, centerToSelf);
+        var tangentAngle = Math.Acos(centerToSelf.magnitude / planetRadius);
+
+        bool isVisible =
+            distance > planetRadius || (distance < planetRadius && angle < tangentAngle);
         return isVisible;
     }
 
