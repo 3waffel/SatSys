@@ -23,7 +23,7 @@ namespace SatSys
         /// <summary>
         /// Standard Gravitational Parameter (km^3 * s^-2)
         /// </summary>
-        // public static double mu => GravConst * 10e-12 * MassOfEarth;
+        // public static double mu => GravConst * MassOfEarth * 10e-9;
         public const double StdGravParam = 398600;
 
         /// <summary>

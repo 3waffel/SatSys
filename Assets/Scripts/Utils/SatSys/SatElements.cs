@@ -266,7 +266,23 @@ namespace SatSys
             return (position, velocity);
         }
 
-        public static Tle Kep2Tle(KeplerianElements elements, double mu)
+        static int GetSum(string str)
+        {
+            int sum = 0;
+            for (int i = 0; i < str.Length - 1; i++)
+            {
+                if (char.IsNumber(str[i]))
+                    sum += (int)Char.GetNumericValue(str[i]);
+                else
+                {
+                    if (str[i] == '-')
+                        sum++;
+                }
+            }
+            return sum;
+        }
+
+        public static Tle Kep2Tle(KeplerianElements elements, double muInKm)
         {
             // use beidou3-g3 as placeholder
             string line1 = "1 45807U 20040A   23145.89727381 -.00000349  00000-0  00000-0 0  9997";
@@ -284,38 +300,25 @@ namespace SatSys
             strList.Add(String.Format("{0,8:##0.0000}", elements.MeanAnomaly));
 
             double meanMotion =
-                Math.Pow(mu, 1 / 3)
-                / (2 * elements.SemiMajorAxis * Math.Pow(Math.PI, 1 / 3) / 86400);
+                86400 / (2 * Math.PI) * Math.Sqrt(muInKm / Math.Pow(elements.SemiMajorAxis, 3));
             strList.Add(String.Format("{0,11:#0.00000000}", meanMotion));
+
             string line2 = String.Join(" ", strList);
             line2 += "00000";
-            line2 += (getSum(line2) % 10);
+            line2 += (GetSum(line2) % 10);
 
-            int getSum(string str)
-            {
-                int sum = 0;
-                for (int i = 0; i < str.Length - 1; i++)
-                {
-                    if (char.IsNumber(str[i]))
-                        sum += (int)Char.GetNumericValue(str[i]);
-                    else
-                    {
-                        if (str[i] == '-')
-                            sum++;
-                    }
-                }
-                return sum;
-            }
             return ParserTLE.parseTle(line1, line2);
         }
 
-        public static KeplerianElements Tle2Kep(Tle tle, double mu)
+        public static KeplerianElements Tle2Kep(Tle tle, double muInKm)
         {
+            double a = Math.Pow(
+                muInKm / Math.Pow(2 * Math.PI * tle.getMeanMotion() / 86400, 2),
+                1.0 / 3.0 // math type warning
+            );
             return new KeplerianElements
             {
-                SemiMajorAxis =
-                    Math.Pow(mu, 1 / 3)
-                    / (2 * tle.getMeanMotion() * Math.Pow(Math.PI, 1 / 3) / 86400),
+                SemiMajorAxis = a,
                 Eccentricity = tle.getEccentriciy(),
                 Inclination = tle.getInclination(),
                 Periapsis = tle.getPerigee(),

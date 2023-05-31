@@ -14,10 +14,13 @@ namespace SatSys
         [Serializable]
         public class SatelliteData
         {
-            public double attractorMass = MassOfEarth; // (m^3 * kg^-1 * s^-2)
-            public double gravConst = GravConst; // (kg)
-            public double mu => attractorMass * gravConst; // (m^3 / s^2)
-            public double muInKm => mu * 10e-12; // (km^3 / s^2)
+            private double attractorMass = MassOfEarth; // (m^3 * kg^-1 * s^-2)
+            private double gravConst = GravConst; // (kg)
+
+            // private double muInM => attractorMass * gravConst; // (m^3 / s^2)
+            // private double muInKm => muInM * 1e-9; // (km^3 / s^2)
+            private double muInM = StdGravParam * 1e9;
+            private double muInKm = StdGravParam;
 
             // different movement types
             public KeplerianElements elements;
@@ -32,9 +35,7 @@ namespace SatSys
             /// </summary>
             /// <returns></returns>
             public double meanMotionPerSecond =>
-                Math.Sqrt(muInKm / Math.Pow(elements.SemiMajorAxis, 3))
-                * (180 / Math.PI)
-                * (180 / Math.PI); // TODO
+                Math.Sqrt(muInKm / Math.Pow(elements.SemiMajorAxis, 3)) * (180 / Math.PI); // TODO
 
             // TODO fix mean motion
             public double currentMeanAnomaly;
@@ -48,14 +49,14 @@ namespace SatSys
             public SatelliteData(KeplerianElements elements)
             {
                 this.elements = elements;
-                this.tle = Kep2Tle(elements, mu);
+                this.tle = Kep2Tle(elements, muInKm);
                 UpdateState(0);
             }
 
             public SatelliteData(Tle tle)
             {
                 this.tle = tle;
-                this.elements = Tle2Kep(tle, mu);
+                this.elements = Tle2Kep(tle, muInKm);
                 UpdateState(0);
             }
 
@@ -64,7 +65,7 @@ namespace SatSys
                 this.attractorMass = data.attractorMass;
                 this.gravConst = data.gravConst;
                 this.elements = data.elements;
-                this.tle = data.tle ?? Kep2Tle(elements, mu);
+                this.tle = data.tle ?? Kep2Tle(elements, muInKm);
                 this.orbitRecord = data.orbitRecord;
             }
 

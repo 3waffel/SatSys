@@ -92,12 +92,9 @@ public class LineManager : MonoBehaviour
 
         // Update only when time changes
         EventManager.TimeChanged += (_) => updateFlag = true;
-        timer = new Timer(100);
+        timer = new Timer(500);
         timer.AutoReset = false;
-        timer.Elapsed += (_, _) =>
-        {
-            updateFlag = false;
-        };
+        timer.Elapsed += (_, _) => updateFlag = false;
     }
 
     void UpdateTask()
